@@ -40,7 +40,7 @@ final class PanelManager: FencePanelDelegate {
                 y: point.y - PanelConfig.defaultHeight / 2
             )
         } else {
-            let screen = NSScreen.main ?? NSScreen.screens.first!
+            guard let screen = NSScreen.main ?? NSScreen.screens.first else { return }
             let center = NSPoint(
                 x: screen.visibleFrame.midX - PanelConfig.defaultWidth / 2,
                 y: screen.visibleFrame.midY - PanelConfig.defaultHeight / 2
@@ -130,6 +130,25 @@ final class PanelManager: FencePanelDelegate {
 
     func panelDidRequestSettings(_ panel: FencePanel) {
         settingsController.show(for: panel, relativeTo: panel.fencePanelView.titleBar)
+    }
+
+    // MARK: - Active Panel Highlight
+
+    private(set) weak var activePanel: FencePanel?
+
+    func setActivePanel(_ panel: FencePanel) {
+        guard activePanel !== panel else { return }
+        activePanel?.fencePanelView.isHighlighted = false
+        activePanel?.fencePanelView.titleBar.isActive = false
+        activePanel = panel
+        panel.fencePanelView.isHighlighted = true
+        panel.fencePanelView.titleBar.isActive = true
+    }
+
+    func clearActivePanel() {
+        activePanel?.fencePanelView.isHighlighted = false
+        activePanel?.fencePanelView.titleBar.isActive = false
+        activePanel = nil
     }
 
     // MARK: - Config Sync

@@ -98,7 +98,11 @@ final class FencePanel: NSPanel {
     // MARK: - Config Updates
 
     func applyConfigChanges() {
-        alphaValue = CGFloat(panelConfig.opacity)
+        if panelConfig.isCollapsed {
+            alphaValue = 0.5
+        } else {
+            alphaValue = CGFloat(panelConfig.opacity)
+        }
         fencePanelView.needsDisplay = true
         fencePanelView.titleBar.updateTitle(panelConfig.title)
     }

@@ -130,6 +130,8 @@ enum EdgeSnapper {
 extension FencePanelView {
 
     private nonisolated(unsafe) static var edgeTrackingAreaKey: UInt8 = 0
+    private nonisolated(unsafe) static var expandWorkItemKey: UInt8 = 0
+    private nonisolated(unsafe) static var collapseWorkItemKey: UInt8 = 0
 
     func installEdgeTracking(side: SnapSide) {
         removeEdgeTracking()
@@ -149,6 +151,12 @@ extension FencePanelView {
             removeTrackingArea(existing)
             objc_setAssociatedObject(self, &FencePanelView.edgeTrackingAreaKey, nil, .OBJC_ASSOCIATION_RETAIN)
         }
+        cancelPendingEdgeWork()
+    }
+
+    private func cancelPendingEdgeWork() {
+        (objc_getAssociatedObject(self, &FencePanelView.expandWorkItemKey) as? DispatchWorkItem)?.cancel()
+        (objc_getAssociatedObject(self, &FencePanelView.collapseWorkItemKey) as? DispatchWorkItem)?.cancel()
     }
 
     override func mouseEntered(with event: NSEvent) {
@@ -158,12 +166,18 @@ extension FencePanelView {
             super.mouseEntered(with: event)
             return
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + EdgeSnapper.expandDelay) { [weak self] in
+
+        // Cancel any pending collapse
+        (objc_getAssociatedObject(self, &FencePanelView.collapseWorkItemKey) as? DispatchWorkItem)?.cancel()
+
+        let workItem = DispatchWorkItem { [weak self] in
             guard let self, let window = self.window as? FencePanel else { return }
             guard window.panelConfig.isCollapsed else { return }
             window.panelConfig.isCollapsed = false
             EdgeSnapper.animateExpand(panel: window)
         }
+        objc_setAssociatedObject(self, &FencePanelView.expandWorkItemKey, workItem, .OBJC_ASSOCIATION_RETAIN)
+        DispatchQueue.main.asyncAfter(deadline: .now() + EdgeSnapper.expandDelay, execute: workItem)
     }
 
     override func mouseExited(with event: NSEvent) {
@@ -173,7 +187,11 @@ extension FencePanelView {
             super.mouseExited(with: event)
             return
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + EdgeSnapper.collapseDelay) { [weak self] in
+
+        // Cancel any pending expand
+        (objc_getAssociatedObject(self, &FencePanelView.expandWorkItemKey) as? DispatchWorkItem)?.cancel()
+
+        let workItem = DispatchWorkItem { [weak self] in
             guard let self, let window = self.window as? FencePanel else { return }
             guard window.panelConfig.snapSide != nil else { return }
             let mouseLocation = NSEvent.mouseLocation
@@ -182,5 +200,7 @@ extension FencePanelView {
                 EdgeSnapper.animateCollapse(panel: window, to: side)
             }
         }
+        objc_setAssociatedObject(self, &FencePanelView.collapseWorkItemKey, workItem, .OBJC_ASSOCIATION_RETAIN)
+        DispatchQueue.main.asyncAfter(deadline: .now() + EdgeSnapper.collapseDelay, execute: workItem)
     }
 }

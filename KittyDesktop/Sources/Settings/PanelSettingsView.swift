@@ -7,6 +7,7 @@ struct PanelSettingsView: View {
     var onDismiss: () -> Void
 
     @State private var swiftUIColor: Color
+    @State private var showTitleError = false
 
     init(title: Binding<String>, opacity: Binding<Float>, backgroundColor: Binding<CodableColor>, onDismiss: @escaping () -> Void) {
         self._title = title
@@ -30,11 +31,22 @@ struct PanelSettingsView: View {
             Divider()
 
             // Title
-            HStack {
-                Text("名称")
-                    .frame(width: 60, alignment: .leading)
-                TextField("面板名称", text: $title)
-                    .textFieldStyle(.roundedBorder)
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text("名称")
+                        .frame(width: 60, alignment: .leading)
+                    TextField("面板名称", text: $title)
+                        .textFieldStyle(.roundedBorder)
+                        .onChange(of: title) { newVal in
+                            showTitleError = newVal.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        }
+                }
+                if showTitleError {
+                    Text("面板名称不能为空")
+                        .font(.caption)
+                        .foregroundColor(.red)
+                        .padding(.leading, 64)
+                }
             }
 
             // Opacity
@@ -131,7 +143,9 @@ final class PanelSettingsHostingController {
         let settingsView = PanelSettingsView(
             title: .init(get: { title }, set: { newVal in
                 title = newVal
-                panel.panelConfig.title = newVal
+                let trimmed = newVal.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !trimmed.isEmpty else { return }
+                panel.panelConfig.title = trimmed
                 panel.applyConfigChanges()
                 panel.panelDelegate?.panelDidUpdateConfig(panel)
             }),

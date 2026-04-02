@@ -61,14 +61,15 @@ final class PanelTitleBar: NSView, NSTextFieldDelegate {
 
     // MARK: - Drawing
 
+    var isActive = false { didSet { needsDisplay = true } }
+
     override func draw(_ dirtyRect: NSRect) {
-        // Slightly darker strip at top as title bar background
         let path = NSBezierPath()
         path.appendRoundedRect(bounds, xRadius: 10, yRadius: 10)
-        NSColor.white.withAlphaComponent(0.06).setFill()
+        let bgAlpha: CGFloat = isActive ? 0.12 : 0.06
+        NSColor.white.withAlphaComponent(bgAlpha).setFill()
         path.fill()
 
-        // Bottom separator
         NSColor.white.withAlphaComponent(0.1).setStroke()
         let line = NSBezierPath()
         line.move(to: NSPoint(x: 8, y: 0))
@@ -78,6 +79,7 @@ final class PanelTitleBar: NSView, NSTextFieldDelegate {
     }
 
     override var isFlipped: Bool { true }
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 
     // MARK: - Double-Click to Edit
 
@@ -90,6 +92,7 @@ final class PanelTitleBar: NSView, NSTextFieldDelegate {
     }
 
     private func enableEditing() {
+        titleLabel.wantsLayer = true
         titleLabel.isEditable = true
         titleLabel.isSelectable = true
         titleLabel.backgroundColor = NSColor.white.withAlphaComponent(0.15)

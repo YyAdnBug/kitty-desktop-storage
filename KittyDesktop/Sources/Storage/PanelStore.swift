@@ -9,7 +9,8 @@ final class PanelStore {
     private var saveDebounceWorkItem: DispatchWorkItem?
 
     private init() {
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+            ?? FileManager.default.temporaryDirectory
         let appDir = appSupport.appendingPathComponent("KittyDesktop", isDirectory: true)
         try? FileManager.default.createDirectory(at: appDir, withIntermediateDirectories: true)
         self.storageURL = appDir.appendingPathComponent("panels.json")

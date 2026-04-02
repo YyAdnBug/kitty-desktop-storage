@@ -47,7 +47,7 @@ struct PreferencesContentView: View {
                 VStack(alignment: .leading) {
                     Text("Kitty 桌面收纳")
                         .font(.title2.bold())
-                    Text("v1.0.0")
+                    Text("v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"))")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -86,12 +86,14 @@ struct PreferencesContentView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("开机自动启动")
                             .font(.body)
-                        Text("登录后自动运行 Kitty 桌面收纳")
+                        Text("登录后自动运行（即将支持）")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
                 }
                 .toggleStyle(.switch)
+                .disabled(true)
+                .opacity(0.5)
             }
 
             Spacer()

@@ -11,6 +11,7 @@ final class FencePanelView: NSView {
     private var dragOrigin: NSPoint = .zero
     private var originalFrame: NSRect = .zero
     private var showDropHighlight = false
+    var isHighlighted = false { didSet { needsDisplay = true } }
 
     enum DragType {
         case none, move
@@ -72,10 +73,17 @@ final class FencePanelView: NSView {
             let strokePath = NSBezierPath(roundedRect: inset, xRadius: 9, yRadius: 9)
             strokePath.lineWidth = 3
             strokePath.stroke()
+        } else if isHighlighted {
+            NSColor.controlAccentColor.withAlphaComponent(0.6).setStroke()
+            let inset = bounds.insetBy(dx: 1, dy: 1)
+            let strokePath = NSBezierPath(roundedRect: inset, xRadius: 9, yRadius: 9)
+            strokePath.lineWidth = 2
+            strokePath.stroke()
         }
     }
 
     override var isFlipped: Bool { false }
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 
     // MARK: - Tracking Area
 
@@ -118,6 +126,8 @@ final class FencePanelView: NSView {
     // MARK: - Mouse Events
 
     override func mouseDown(with event: NSEvent) {
+        PanelManager.shared.setActivePanel(panel)
+
         let local = convert(event.locationInWindow, from: nil)
         dragType = detectDragType(at: local)
         if dragType != .none {
@@ -251,39 +261,69 @@ final class FencePanelView: NSView {
         ) as? [URL] else { return false }
 
         var added = false
+        var skippedDuplicate = 0
+        var failedCount = 0
+
         for url in urls {
             if panel.panelConfig.items.contains(where: {
                 $0.resolveURL()?.standardizedFileURL == url.standardizedFileURL
             }) {
+                skippedDuplicate += 1
                 continue
             }
-            guard let item = try? PanelItem(url: url) else { continue }
-            panel.panelConfig.items.append(item)
-            added = true
+            if let item = try? PanelItem(url: url) {
+                panel.panelConfig.items.append(item)
+                added = true
+            } else {
+                failedCount += 1
+            }
         }
 
         if added {
             fileGrid.reloadData(with: panel.panelConfig)
             panel.panelDelegate?.panelDidUpdateConfig(panel)
         }
-        return added
+
+        if failedCount > 0 {
+            let alert = NSAlert()
+            alert.messageText = "部分文件添加失败"
+            alert.informativeText = "有 \(failedCount) 个文件无法添加到面板（可能没有读取权限）。"
+            alert.alertStyle = .warning
+            alert.runModal()
+        }
+
+        return added || skippedDuplicate > 0
     }
 
     // MARK: - Right-Click Menu on Background
 
     override func menu(for event: NSEvent) -> NSMenu? {
         let menu = NSMenu()
-        menu.addItem(withTitle: "新建面板", action: #selector(AppDelegate.createNewPanelFromMenu), keyEquivalent: "n")
+
+        let newItem = NSMenuItem(title: "新建面板", action: #selector(createNewPanel), keyEquivalent: "")
+        newItem.target = self
+        menu.addItem(newItem)
+
         menu.addItem(.separator())
-        menu.addItem(withTitle: "面板设置…", action: #selector(requestSettings), keyEquivalent: "")
+
+        let settingsItem = NSMenuItem(title: "面板设置…", action: #selector(requestSettings), keyEquivalent: "")
+        settingsItem.target = self
+        menu.addItem(settingsItem)
+
         menu.addItem(.separator())
+
         let deleteItem = NSMenuItem(title: "删除此面板", action: #selector(requestDelete), keyEquivalent: "")
+        deleteItem.target = self
         deleteItem.attributedTitle = NSAttributedString(
             string: "删除此面板",
             attributes: [.foregroundColor: NSColor.systemRed]
         )
         menu.addItem(deleteItem)
         return menu
+    }
+
+    @objc private func createNewPanel() {
+        PanelManager.shared.createNewPanel()
     }
 
     @objc private func requestSettings() {

@@ -92,11 +92,17 @@ final class FileGridView: NSView, NSCollectionViewDataSource, NSCollectionViewDe
     // MARK: - Delete Key
 
     override func keyDown(with event: NSEvent) {
-        // Delete key or Backspace → remove from panel
         if event.keyCode == 51 || event.keyCode == 117 {
             let selected = collectionView.selectionIndexPaths
-            for indexPath in selected.sorted(by: { $0.item > $1.item }) {
-                let item = config.items[indexPath.item]
+            guard !selected.isEmpty else { return }
+
+            let items = selected.compactMap { indexPath -> PanelItem? in
+                guard indexPath.item < config.items.count else { return nil }
+                return config.items[indexPath.item]
+            }
+            guard !items.isEmpty else { return }
+
+            for item in items {
                 onItemRemoved?(item)
             }
         } else {
@@ -105,4 +111,5 @@ final class FileGridView: NSView, NSCollectionViewDataSource, NSCollectionViewDe
     }
 
     override var acceptsFirstResponder: Bool { true }
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 }

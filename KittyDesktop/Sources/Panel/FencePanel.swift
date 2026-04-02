@@ -8,6 +8,8 @@ protocol FencePanelDelegate: AnyObject {
 
 final class FencePanel: NSPanel {
 
+    static let desktopLevel = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.desktopIconWindow)) + 1)
+
     var panelConfig: PanelConfig {
         didSet { panelDelegate?.panelDidUpdateConfig(self) }
     }
@@ -27,17 +29,12 @@ final class FencePanel: NSPanel {
         )
         setupWindow()
         setupContentView()
+        observePreferences()
     }
 
     private func setupWindow() {
-        level = .floating
-
-        collectionBehavior = [
-            .canJoinAllSpaces,
-            .stationary,
-            .ignoresCycle,
-            .fullScreenAuxiliary,
-        ]
+        applyWindowLevel()
+        applyCollectionBehavior()
 
         isOpaque = false
         backgroundColor = .clear
@@ -56,6 +53,46 @@ final class FencePanel: NSPanel {
     private func setupContentView() {
         fencePanelView = FencePanelView(panel: self)
         contentView = fencePanelView
+    }
+
+    // MARK: - Window Level & Behavior
+
+    func applyWindowLevel() {
+        if GlobalPreferences.shared.alwaysOnTop {
+            level = .floating
+        } else {
+            level = FencePanel.desktopLevel
+        }
+    }
+
+    func applyCollectionBehavior() {
+        var behavior: NSWindow.CollectionBehavior = [
+            .stationary,
+            .ignoresCycle,
+            .fullScreenAuxiliary,
+        ]
+        if GlobalPreferences.shared.showInAllSpaces {
+            behavior.insert(.canJoinAllSpaces)
+        } else {
+            behavior.insert(.moveToActiveSpace)
+        }
+        collectionBehavior = behavior
+    }
+
+    // MARK: - Preferences Observer
+
+    private func observePreferences() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(preferencesChanged),
+            name: .preferencesDidChange,
+            object: nil
+        )
+    }
+
+    @objc private func preferencesChanged() {
+        applyWindowLevel()
+        applyCollectionBehavior()
     }
 
     // MARK: - Config Updates
@@ -82,5 +119,9 @@ final class FencePanel: NSPanel {
 
     override func cancelOperation(_ sender: Any?) {
         fencePanelView.titleBar.cancelEditing()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }

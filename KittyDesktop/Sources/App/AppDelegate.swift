@@ -3,24 +3,15 @@ import AppKit
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var statusBarController: StatusBarController!
+    private var preferencesController = PreferencesWindowController()
     private var panelManager: PanelManager { PanelManager.shared }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSLog("[KittyDesktop] applicationDidFinishLaunching START")
-
         statusBarController = StatusBarController()
-        NSLog("[KittyDesktop] StatusBarController created")
-
         panelManager.loadPanels()
-        NSLog("[KittyDesktop] Panels loaded: \(panelManager.panels.count)")
 
         if panelManager.panels.isEmpty {
             panelManager.createNewPanel()
-            NSLog("[KittyDesktop] Created default panel")
-        }
-
-        for (i, panel) in panelManager.panels.enumerated() {
-            NSLog("[KittyDesktop] Panel \(i): frame=\(panel.frame), isVisible=\(panel.isVisible), level=\(panel.level.rawValue)")
         }
 
         NotificationCenter.default.addObserver(
@@ -29,7 +20,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             name: NSApplication.didChangeScreenParametersNotification,
             object: nil
         )
-        NSLog("[KittyDesktop] applicationDidFinishLaunching DONE")
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -60,6 +50,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         for panel in panelManager.panels {
             panel.orderOut(nil)
         }
+    }
+
+    @objc func showPreferences() {
+        preferencesController.showWindow()
     }
 
     @objc private func screenParametersChanged() {

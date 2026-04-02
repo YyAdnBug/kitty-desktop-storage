@@ -1,0 +1,22 @@
+# Xcode
+KittyDesktop/*.xcodeproj/xcuserdata/
+KittyDesktop/*.xcodeproj/project.xcworkspace/xcuserdata/
+KittyDesktop/*.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+
+# Build output
+build/
+DerivedData/
+*.app
+*.dmg
+
+# macOS
+.DS_Store
+**/.DS_Store
+*.swp
+*~
+
+# Xcode generated (xcodegen regenerates these)
+KittyDesktop/KittyDesktop.xcodeproj/
+
+# App data
+*.json.bak

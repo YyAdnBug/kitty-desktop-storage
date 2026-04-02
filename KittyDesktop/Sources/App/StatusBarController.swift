@@ -12,26 +12,16 @@ final class StatusBarController {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
 
         if let button = statusItem.button {
-            let icon: NSImage?
             if let path = Bundle.main.path(forResource: "menubar_icon", ofType: "png") {
-                icon = NSImage(contentsOfFile: path)
-                NSLog("[KittyDesktop] Loaded icon from bundle path: \(path)")
-            } else {
-                icon = NSImage(named: "MenuBarIcon")
-                NSLog("[KittyDesktop] Tried NSImage(named:), result: \(icon != nil)")
-            }
-
-            if let icon = icon {
-                icon.size = NSSize(width: 18, height: 18)
+                let icon = NSImage(contentsOfFile: path)
+                icon?.size = NSSize(width: 18, height: 18)
                 button.image = icon
             } else {
-                NSLog("[KittyDesktop] WARNING: No icon found, using emoji fallback")
                 button.title = "🐱"
             }
         }
 
         statusItem.menu = buildMenu()
-        NSLog("[KittyDesktop] StatusItem menu set")
     }
 
     private func buildMenu() -> NSMenu {
@@ -66,6 +56,16 @@ final class StatusBarController {
             keyEquivalent: ""
         )
         menu.addItem(hideAll)
+
+        menu.addItem(.separator())
+
+        let prefs = NSMenuItem(
+            title: "偏好设置…",
+            action: #selector(AppDelegate.showPreferences),
+            keyEquivalent: ","
+        )
+        prefs.keyEquivalentModifierMask = [.command]
+        menu.addItem(prefs)
 
         menu.addItem(.separator())
 

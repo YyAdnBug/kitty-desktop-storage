@@ -1,0 +1,425 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		077030EB692400D5772434F2 /* FencePanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE9022D52F192577C4BDF4F /* FencePanelView.swift */; };
+		0848F1DE5F2BE65FF5FFA5C6 /* PanelStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A3E315107462FF7F2ADA41 /* PanelStore.swift */; };
+		2673C3D1A887DC2758E8DEE4 /* BookmarkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B119A84DF1A9902664FE39E /* BookmarkManager.swift */; };
+		2ACB4CA65FEDF1DE31A2389A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9380D82E0EF8914784AFBEB /* AppDelegate.swift */; };
+		2B303B41375E94D303B06C65 /* FencePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793B547529E1BD1B33491FA2 /* FencePanel.swift */; };
+		4420B421906A8D2C60F82585 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17BB281C18E1C792A14578AD /* main.swift */; };
+		53581F7A2E4B3B6DBC06803C /* EdgeSnapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA543283A98AD3D0B21C3EE0 /* EdgeSnapper.swift */; };
+		5898C25DBFBCC778B1467655 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7F02A4CF157CFFBF95109E63 /* Assets.xcassets */; };
+		59B9AE8BF7806C8A5FA70311 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A978AE2541863B6067F2F41 /* StatusBarController.swift */; };
+		6259B9146A52971718307586 /* TrashHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAEEDFDB9139654AED029C0F /* TrashHandler.swift */; };
+		67D6764BC62E006B8E5B6781 /* PanelItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C610DE6CD5F960CA7A22DA /* PanelItem.swift */; };
+		833DE37C06D1958F2AD699D6 /* FileGridItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA0662FDB09177B61CFDC4B /* FileGridItem.swift */; };
+		96239BC5E3EC2FDD468B9132 /* PanelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B661DA7F26BB13983953FA /* PanelConfig.swift */; };
+		9C1FF0ADC2504A0AC9411F8E /* FileGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB7DD5294E9C819982DF2C5 /* FileGridView.swift */; };
+		B721AD92A6314B18C4531674 /* menubar_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0591BF3C29D837CD4137BD5F /* menubar_icon.png */; };
+		B970D1DC6A82A5DD14E35EF1 /* CodableColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E19462E9595E89986A8945 /* CodableColor.swift */; };
+		BE07B477C47BF9DC05F30586 /* PanelSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50040158A73F95C2297FEB8 /* PanelSettingsView.swift */; };
+		E0335269D5FA8F307A4455F9 /* PanelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEC76FB377296606A2DADC4 /* PanelManager.swift */; };
+		EB71E8CA20C74AE3AC6B8AEB /* PanelTitleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B1CE71C88B13B6FF75D39E /* PanelTitleBar.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		04B1CE71C88B13B6FF75D39E /* PanelTitleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelTitleBar.swift; sourceTree = "<group>"; };
+		0591BF3C29D837CD4137BD5F /* menubar_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = menubar_icon.png; sourceTree = "<group>"; };
+		09A3E315107462FF7F2ADA41 /* PanelStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelStore.swift; sourceTree = "<group>"; };
+		0BB7DD5294E9C819982DF2C5 /* FileGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileGridView.swift; sourceTree = "<group>"; };
+		17BB281C18E1C792A14578AD /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		2B119A84DF1A9902664FE39E /* BookmarkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkManager.swift; sourceTree = "<group>"; };
+		35CDF617B0FE0897F3334B35 /* KittyDesktop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KittyDesktop.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		793B547529E1BD1B33491FA2 /* FencePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FencePanel.swift; sourceTree = "<group>"; };
+		7F02A4CF157CFFBF95109E63 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		93E19462E9595E89986A8945 /* CodableColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableColor.swift; sourceTree = "<group>"; };
+		9A978AE2541863B6067F2F41 /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
+		A9380D82E0EF8914784AFBEB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		AAEEDFDB9139654AED029C0F /* TrashHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrashHandler.swift; sourceTree = "<group>"; };
+		ABE9022D52F192577C4BDF4F /* FencePanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FencePanelView.swift; sourceTree = "<group>"; };
+		B50040158A73F95C2297FEB8 /* PanelSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelSettingsView.swift; sourceTree = "<group>"; };
+		BBA0662FDB09177B61CFDC4B /* FileGridItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileGridItem.swift; sourceTree = "<group>"; };
+		E9C610DE6CD5F960CA7A22DA /* PanelItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelItem.swift; sourceTree = "<group>"; };
+		EA543283A98AD3D0B21C3EE0 /* EdgeSnapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeSnapper.swift; sourceTree = "<group>"; };
+		EEEC76FB377296606A2DADC4 /* PanelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelManager.swift; sourceTree = "<group>"; };
+		F3B661DA7F26BB13983953FA /* PanelConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelConfig.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		06A534EE71044106ACCBB2D5 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				B50040158A73F95C2297FEB8 /* PanelSettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		26EFFA63297BCFCF156D4ABB /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				93E19462E9595E89986A8945 /* CodableColor.swift */,
+				F3B661DA7F26BB13983953FA /* PanelConfig.swift */,
+				E9C610DE6CD5F960CA7A22DA /* PanelItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		3862BBF974AD48BE98AFD0AB /* Panel */ = {
+			isa = PBXGroup;
+			children = (
+				793B547529E1BD1B33491FA2 /* FencePanel.swift */,
+				ABE9022D52F192577C4BDF4F /* FencePanelView.swift */,
+				BBA0662FDB09177B61CFDC4B /* FileGridItem.swift */,
+				0BB7DD5294E9C819982DF2C5 /* FileGridView.swift */,
+				04B1CE71C88B13B6FF75D39E /* PanelTitleBar.swift */,
+			);
+			path = Panel;
+			sourceTree = "<group>";
+		};
+		4699AB38EE0B7FBA5D3043BB /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A9380D82E0EF8914784AFBEB /* AppDelegate.swift */,
+				17BB281C18E1C792A14578AD /* main.swift */,
+				EEEC76FB377296606A2DADC4 /* PanelManager.swift */,
+				9A978AE2541863B6067F2F41 /* StatusBarController.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		4DD79A354287B3EB0DFF4F25 /* FileManagement */ = {
+			isa = PBXGroup;
+			children = (
+				2B119A84DF1A9902664FE39E /* BookmarkManager.swift */,
+				AAEEDFDB9139654AED029C0F /* TrashHandler.swift */,
+			);
+			path = FileManagement;
+			sourceTree = "<group>";
+		};
+		72FDECB028B1170E4DC5A773 = {
+			isa = PBXGroup;
+			children = (
+				A180578536C97D4463E2D39F /* Resources */,
+				ACF972B2708E32CB67D0F0E1 /* Sources */,
+				EAC68004FC601F6C01BA0687 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		7F9D7A36820EE8E10A230A03 /* EdgeSnap */ = {
+			isa = PBXGroup;
+			children = (
+				EA543283A98AD3D0B21C3EE0 /* EdgeSnapper.swift */,
+			);
+			path = EdgeSnap;
+			sourceTree = "<group>";
+		};
+		A180578536C97D4463E2D39F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				7F02A4CF157CFFBF95109E63 /* Assets.xcassets */,
+				0591BF3C29D837CD4137BD5F /* menubar_icon.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		ACF972B2708E32CB67D0F0E1 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				4699AB38EE0B7FBA5D3043BB /* App */,
+				7F9D7A36820EE8E10A230A03 /* EdgeSnap */,
+				4DD79A354287B3EB0DFF4F25 /* FileManagement */,
+				26EFFA63297BCFCF156D4ABB /* Models */,
+				3862BBF974AD48BE98AFD0AB /* Panel */,
+				06A534EE71044106ACCBB2D5 /* Settings */,
+				EF003E55AE02D5AF110C9A58 /* Storage */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		EAC68004FC601F6C01BA0687 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				35CDF617B0FE0897F3334B35 /* KittyDesktop.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EF003E55AE02D5AF110C9A58 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				09A3E315107462FF7F2ADA41 /* PanelStore.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		18C1F290C70F7A2D4AA27840 /* KittyDesktop */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 16827F6345735C9B9A72D4A1 /* Build configuration list for PBXNativeTarget "KittyDesktop" */;
+			buildPhases = (
+				94C7AB7D87EA7ADF6A415249 /* Sources */,
+				7CEDC0BDA6E782B801CE7CB0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KittyDesktop;
+			packageProductDependencies = (
+			);
+			productName = KittyDesktop;
+			productReference = 35CDF617B0FE0897F3334B35 /* KittyDesktop.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E77B7E4406EF81AE9D6F1F0A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = C9897AB987C9A30D44B8FED2 /* Build configuration list for PBXProject "KittyDesktop" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 72FDECB028B1170E4DC5A773;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = EAC68004FC601F6C01BA0687 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				18C1F290C70F7A2D4AA27840 /* KittyDesktop */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7CEDC0BDA6E782B801CE7CB0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5898C25DBFBCC778B1467655 /* Assets.xcassets in Resources */,
+				B721AD92A6314B18C4531674 /* menubar_icon.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		94C7AB7D87EA7ADF6A415249 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2ACB4CA65FEDF1DE31A2389A /* AppDelegate.swift in Sources */,
+				2673C3D1A887DC2758E8DEE4 /* BookmarkManager.swift in Sources */,
+				B970D1DC6A82A5DD14E35EF1 /* CodableColor.swift in Sources */,
+				53581F7A2E4B3B6DBC06803C /* EdgeSnapper.swift in Sources */,
+				2B303B41375E94D303B06C65 /* FencePanel.swift in Sources */,
+				077030EB692400D5772434F2 /* FencePanelView.swift in Sources */,
+				833DE37C06D1958F2AD699D6 /* FileGridItem.swift in Sources */,
+				9C1FF0ADC2504A0AC9411F8E /* FileGridView.swift in Sources */,
+				96239BC5E3EC2FDD468B9132 /* PanelConfig.swift in Sources */,
+				67D6764BC62E006B8E5B6781 /* PanelItem.swift in Sources */,
+				E0335269D5FA8F307A4455F9 /* PanelManager.swift in Sources */,
+				BE07B477C47BF9DC05F30586 /* PanelSettingsView.swift in Sources */,
+				0848F1DE5F2BE65FF5FFA5C6 /* PanelStore.swift in Sources */,
+				EB71E8CA20C74AE3AC6B8AEB /* PanelTitleBar.swift in Sources */,
+				59B9AE8BF7806C8A5FA70311 /* StatusBarController.swift in Sources */,
+				6259B9146A52971718307586 /* TrashHandler.swift in Sources */,
+				4420B421906A8D2C60F82585 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1A094CD87BFE3AECD1333F19 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = Resources/KittyDesktop.entitlements;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		47B63BB328A92239818E4D1F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Resources/KittyDesktop.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.kitty.desktop;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		88F042CCFF61E7BDADFC6F63 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Resources/KittyDesktop.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.kitty.desktop;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		B488685FB7004EC1019EA135 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = Resources/KittyDesktop.entitlements;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		16827F6345735C9B9A72D4A1 /* Build configuration list for PBXNativeTarget "KittyDesktop" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				47B63BB328A92239818E4D1F /* Debug */,
+				88F042CCFF61E7BDADFC6F63 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C9897AB987C9A30D44B8FED2 /* Build configuration list for PBXProject "KittyDesktop" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B488685FB7004EC1019EA135 /* Debug */,
+				1A094CD87BFE3AECD1333F19 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E77B7E4406EF81AE9D6F1F0A /* Project object */;
+}

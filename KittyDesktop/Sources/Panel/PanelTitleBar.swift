@@ -1,0 +1,139 @@
+import AppKit
+
+final class PanelTitleBar: NSView, NSTextFieldDelegate {
+
+    private let titleLabel = NSTextField()
+    private let settingsButton = NSButton()
+    private var config: PanelConfig
+    var onTitleChanged: ((String) -> Void)?
+    var onSettingsClicked: (() -> Void)?
+
+    init(config: PanelConfig) {
+        self.config = config
+        super.init(frame: .zero)
+        setupViews()
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError() }
+
+    private func setupViews() {
+        wantsLayer = true
+
+        // Title label — editable on double-click
+        titleLabel.stringValue = config.title
+        titleLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        titleLabel.textColor = .white.withAlphaComponent(0.9)
+        titleLabel.backgroundColor = .clear
+        titleLabel.isBordered = false
+        titleLabel.isEditable = false
+        titleLabel.isSelectable = false
+        titleLabel.focusRingType = .none
+        titleLabel.lineBreakMode = .byTruncatingTail
+        titleLabel.cell?.truncatesLastVisibleLine = true
+        titleLabel.delegate = self
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(titleLabel)
+
+        // Settings (⋯) button
+        settingsButton.bezelStyle = .inline
+        settingsButton.isBordered = false
+        settingsButton.title = ""
+        settingsButton.image = NSImage(systemSymbolName: "ellipsis.circle", accessibilityDescription: "设置")
+        settingsButton.contentTintColor = .white.withAlphaComponent(0.7)
+        settingsButton.imageScaling = .scaleProportionallyDown
+        settingsButton.target = self
+        settingsButton.action = #selector(settingsClicked)
+        settingsButton.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(settingsButton)
+
+        NSLayoutConstraint.activate([
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: settingsButton.leadingAnchor, constant: -4),
+
+            settingsButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            settingsButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+            settingsButton.widthAnchor.constraint(equalToConstant: 20),
+            settingsButton.heightAnchor.constraint(equalToConstant: 20),
+        ])
+    }
+
+    // MARK: - Drawing
+
+    override func draw(_ dirtyRect: NSRect) {
+        // Slightly darker strip at top as title bar background
+        let path = NSBezierPath()
+        path.appendRoundedRect(bounds, xRadius: 10, yRadius: 10)
+        NSColor.white.withAlphaComponent(0.06).setFill()
+        path.fill()
+
+        // Bottom separator
+        NSColor.white.withAlphaComponent(0.1).setStroke()
+        let line = NSBezierPath()
+        line.move(to: NSPoint(x: 8, y: 0))
+        line.line(to: NSPoint(x: bounds.width - 8, y: 0))
+        line.lineWidth = 0.5
+        line.stroke()
+    }
+
+    override var isFlipped: Bool { true }
+
+    // MARK: - Double-Click to Edit
+
+    override func mouseDown(with event: NSEvent) {
+        if event.clickCount == 2 {
+            enableEditing()
+        } else {
+            super.mouseDown(with: event)
+        }
+    }
+
+    private func enableEditing() {
+        titleLabel.isEditable = true
+        titleLabel.isSelectable = true
+        titleLabel.backgroundColor = NSColor.white.withAlphaComponent(0.15)
+        titleLabel.layer?.cornerRadius = 4
+        window?.makeFirstResponder(titleLabel)
+        titleLabel.selectText(nil)
+    }
+
+    func cancelEditing() {
+        titleLabel.isEditable = false
+        titleLabel.isSelectable = false
+        titleLabel.backgroundColor = .clear
+        titleLabel.stringValue = config.title
+    }
+
+    // MARK: - NSTextFieldDelegate
+
+    func controlTextDidEndEditing(_ obj: Notification) {
+        let newTitle = titleLabel.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        titleLabel.isEditable = false
+        titleLabel.isSelectable = false
+        titleLabel.backgroundColor = .clear
+
+        if !newTitle.isEmpty && newTitle != config.title {
+            config.title = newTitle
+            onTitleChanged?(newTitle)
+        } else {
+            titleLabel.stringValue = config.title
+        }
+    }
+
+    // MARK: - Public
+
+    func updateTitle(_ title: String) {
+        config.title = title
+        titleLabel.stringValue = title
+    }
+
+    func updateConfig(_ config: PanelConfig) {
+        self.config = config
+        titleLabel.stringValue = config.title
+    }
+
+    @objc private func settingsClicked() {
+        onSettingsClicked?()
+    }
+}

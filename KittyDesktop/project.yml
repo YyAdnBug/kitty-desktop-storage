@@ -33,7 +33,7 @@ targets:
         CFBundleName: KittyDesktop
         CFBundleDisplayName: Kitty 桌面收纳
         CFBundleIdentifier: com.kitty.desktop
-        CFBundleVersion: "3"
+        CFBundleVersion: "5"
         CFBundleShortVersionString: "1.0.0"
         CFBundlePackageType: APPL
         CFBundleExecutable: KittyDesktop

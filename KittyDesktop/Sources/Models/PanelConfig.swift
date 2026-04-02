@@ -43,6 +43,7 @@ struct PanelConfig: Codable, Identifiable, Equatable {
     var snapSide: SnapSide?
     var items: [PanelItem]
     var isCollapsed: Bool
+    var alwaysOnTop: Bool
     var createdDate: Date
 
     static let minWidth: CGFloat = 150
@@ -61,10 +62,31 @@ struct PanelConfig: Codable, Identifiable, Equatable {
         self.snapSide = nil
         self.items = []
         self.isCollapsed = false
+        self.alwaysOnTop = false
         self.createdDate = Date()
     }
 
     static func == (lhs: PanelConfig, rhs: PanelConfig) -> Bool {
         lhs.id == rhs.id
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, title, opacity, backgroundColor, frame, expandedFrame
+        case snapSide, items, isCollapsed, alwaysOnTop, createdDate
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        title = try c.decode(String.self, forKey: .title)
+        opacity = try c.decode(Float.self, forKey: .opacity)
+        backgroundColor = try c.decode(CodableColor.self, forKey: .backgroundColor)
+        frame = try c.decode(CodableRect.self, forKey: .frame)
+        expandedFrame = try c.decodeIfPresent(CodableRect.self, forKey: .expandedFrame)
+        snapSide = try c.decodeIfPresent(SnapSide.self, forKey: .snapSide)
+        items = try c.decode([PanelItem].self, forKey: .items)
+        isCollapsed = try c.decode(Bool.self, forKey: .isCollapsed)
+        alwaysOnTop = try c.decodeIfPresent(Bool.self, forKey: .alwaysOnTop) ?? false
+        createdDate = try c.decode(Date.self, forKey: .createdDate)
     }
 }

@@ -4,15 +4,17 @@ struct PanelSettingsView: View {
     @Binding var title: String
     @Binding var opacity: Float
     @Binding var backgroundColor: CodableColor
+    @Binding var alwaysOnTop: Bool
     var onDismiss: () -> Void
 
     @State private var swiftUIColor: Color
     @State private var showTitleError = false
 
-    init(title: Binding<String>, opacity: Binding<Float>, backgroundColor: Binding<CodableColor>, onDismiss: @escaping () -> Void) {
+    init(title: Binding<String>, opacity: Binding<Float>, backgroundColor: Binding<CodableColor>, alwaysOnTop: Binding<Bool>, onDismiss: @escaping () -> Void) {
         self._title = title
         self._opacity = opacity
         self._backgroundColor = backgroundColor
+        self._alwaysOnTop = alwaysOnTop
         self.onDismiss = onDismiss
         let c = backgroundColor.wrappedValue
         self._swiftUIColor = State(initialValue: Color(
@@ -110,6 +112,18 @@ struct PanelSettingsView: View {
                 }
             }
 
+            // Always on top
+            Toggle(isOn: $alwaysOnTop) {
+                HStack {
+                    Text("置顶显示")
+                        .frame(width: 60, alignment: .leading)
+                    Text("此面板始终显示在其他窗口上方")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .toggleStyle(.switch)
+
             Divider()
 
             HStack {
@@ -139,6 +153,7 @@ final class PanelSettingsHostingController {
         var title = panel.panelConfig.title
         var opacity = panel.panelConfig.opacity
         var bgColor = panel.panelConfig.backgroundColor
+        var onTop = panel.panelConfig.alwaysOnTop
 
         let settingsView = PanelSettingsView(
             title: .init(get: { title }, set: { newVal in
@@ -158,6 +173,12 @@ final class PanelSettingsHostingController {
             backgroundColor: .init(get: { bgColor }, set: { newVal in
                 bgColor = newVal
                 panel.panelConfig.backgroundColor = newVal
+                panel.applyConfigChanges()
+                panel.panelDelegate?.panelDidUpdateConfig(panel)
+            }),
+            alwaysOnTop: .init(get: { onTop }, set: { newVal in
+                onTop = newVal
+                panel.panelConfig.alwaysOnTop = newVal
                 panel.applyConfigChanges()
                 panel.panelDelegate?.panelDidUpdateConfig(panel)
             }),

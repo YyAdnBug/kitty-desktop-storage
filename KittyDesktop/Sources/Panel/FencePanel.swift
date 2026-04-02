@@ -58,7 +58,7 @@ final class FencePanel: NSPanel {
     // MARK: - Window Level & Behavior
 
     func applyWindowLevel() {
-        if GlobalPreferences.shared.alwaysOnTop {
+        if panelConfig.alwaysOnTop || GlobalPreferences.shared.alwaysOnTop {
             level = .floating
         } else {
             level = FencePanel.desktopLevel
@@ -103,6 +103,7 @@ final class FencePanel: NSPanel {
         } else {
             alphaValue = CGFloat(panelConfig.opacity)
         }
+        applyWindowLevel()
         fencePanelView.needsDisplay = true
         fencePanelView.titleBar.updateTitle(panelConfig.title)
     }
@@ -120,6 +121,13 @@ final class FencePanel: NSPanel {
 
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
+
+    override func sendEvent(_ event: NSEvent) {
+        if event.type == .leftMouseDown {
+            PanelManager.shared.setActivePanel(self)
+        }
+        super.sendEvent(event)
+    }
 
     override func cancelOperation(_ sender: Any?) {
         fencePanelView.titleBar.cancelEditing()

@@ -126,8 +126,6 @@ final class FencePanelView: NSView {
     // MARK: - Mouse Events
 
     override func mouseDown(with event: NSEvent) {
-        PanelManager.shared.setActivePanel(panel)
-
         let local = convert(event.locationInWindow, from: nil)
         dragType = detectDragType(at: local)
         if dragType != .none {

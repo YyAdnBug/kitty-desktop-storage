@@ -5,16 +5,18 @@ struct PanelSettingsView: View {
     @Binding var opacity: Float
     @Binding var backgroundColor: CodableColor
     @Binding var alwaysOnTop: Bool
+    @Binding var isLocked: Bool
     var onDismiss: () -> Void
 
     @State private var swiftUIColor: Color
     @State private var showTitleError = false
 
-    init(title: Binding<String>, opacity: Binding<Float>, backgroundColor: Binding<CodableColor>, alwaysOnTop: Binding<Bool>, onDismiss: @escaping () -> Void) {
+    init(title: Binding<String>, opacity: Binding<Float>, backgroundColor: Binding<CodableColor>, alwaysOnTop: Binding<Bool>, isLocked: Binding<Bool>, onDismiss: @escaping () -> Void) {
         self._title = title
         self._opacity = opacity
         self._backgroundColor = backgroundColor
         self._alwaysOnTop = alwaysOnTop
+        self._isLocked = isLocked
         self.onDismiss = onDismiss
         let c = backgroundColor.wrappedValue
         self._swiftUIColor = State(initialValue: Color(
@@ -124,6 +126,18 @@ struct PanelSettingsView: View {
             }
             .toggleStyle(.switch)
 
+            // Lock
+            Toggle(isOn: $isLocked) {
+                HStack {
+                    Text("锁定面板")
+                        .frame(width: 60, alignment: .leading)
+                    Text("禁止拖动和调整大小，仅操作文件")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .toggleStyle(.switch)
+
             Divider()
 
             HStack {
@@ -154,6 +168,7 @@ final class PanelSettingsHostingController {
         var opacity = panel.panelConfig.opacity
         var bgColor = panel.panelConfig.backgroundColor
         var onTop = panel.panelConfig.alwaysOnTop
+        var locked = panel.panelConfig.isLocked
 
         let settingsView = PanelSettingsView(
             title: .init(get: { title }, set: { newVal in
@@ -179,6 +194,12 @@ final class PanelSettingsHostingController {
             alwaysOnTop: .init(get: { onTop }, set: { newVal in
                 onTop = newVal
                 panel.panelConfig.alwaysOnTop = newVal
+                panel.applyConfigChanges()
+                panel.panelDelegate?.panelDidUpdateConfig(panel)
+            }),
+            isLocked: .init(get: { locked }, set: { newVal in
+                locked = newVal
+                panel.panelConfig.isLocked = newVal
                 panel.applyConfigChanges()
                 panel.panelDelegate?.panelDidUpdateConfig(panel)
             }),

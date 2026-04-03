@@ -1,10 +1,12 @@
 import AppKit
+import Carbon.HIToolbox
 
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var statusBarController: StatusBarController!
     private var preferencesController = PreferencesWindowController()
     private var panelManager: PanelManager { PanelManager.shared }
+    private var panelsVisible = true
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusBarController = StatusBarController()
@@ -18,12 +20,42 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             FileHideManager.shared.hideAllManagedFiles()
         }
 
+        registerGlobalHotkey()
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(screenParametersChanged),
             name: NSApplication.didChangeScreenParametersNotification,
             object: nil
         )
+    }
+
+    // MARK: - Global Hotkey (⌥⌘D)
+
+    private func registerGlobalHotkey() {
+        NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            self?.handleHotkey(event)
+        }
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            self?.handleHotkey(event)
+            return event
+        }
+    }
+
+    private func handleHotkey(_ event: NSEvent) {
+        let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        if event.keyCode == UInt16(kVK_ANSI_D) && flags == [.option, .command] {
+            toggleAllPanels()
+        }
+    }
+
+    @objc func toggleAllPanels() {
+        if panelsVisible {
+            hideAllPanels()
+        } else {
+            showAllPanels()
+        }
+        panelsVisible.toggle()
     }
 
     func applicationWillTerminate(_ notification: Notification) {

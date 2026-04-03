@@ -105,7 +105,7 @@ final class FencePanel: NSPanel {
         }
         applyWindowLevel()
         fencePanelView.needsDisplay = true
-        fencePanelView.titleBar.updateTitle(panelConfig.title)
+        fencePanelView.titleBar.updateConfig(panelConfig)
     }
 
     func updateFrame(to rect: NSRect) {

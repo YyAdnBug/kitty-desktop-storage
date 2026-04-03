@@ -44,7 +44,12 @@ struct PanelConfig: Codable, Identifiable, Equatable {
     var items: [PanelItem]
     var isCollapsed: Bool
     var alwaysOnTop: Bool
+    var isLocked: Bool
     var createdDate: Date
+
+    var displayTitle: String {
+        items.isEmpty ? title : "\(title)（\(items.count)）"
+    }
 
     static let minWidth: CGFloat = 150
     static let minHeight: CGFloat = 100
@@ -63,6 +68,7 @@ struct PanelConfig: Codable, Identifiable, Equatable {
         self.items = []
         self.isCollapsed = false
         self.alwaysOnTop = false
+        self.isLocked = false
         self.createdDate = Date()
     }
 
@@ -72,7 +78,7 @@ struct PanelConfig: Codable, Identifiable, Equatable {
 
     enum CodingKeys: String, CodingKey {
         case id, title, opacity, backgroundColor, frame, expandedFrame
-        case snapSide, items, isCollapsed, alwaysOnTop, createdDate
+        case snapSide, items, isCollapsed, alwaysOnTop, isLocked, createdDate
     }
 
     init(from decoder: Decoder) throws {
@@ -87,6 +93,7 @@ struct PanelConfig: Codable, Identifiable, Equatable {
         items = try c.decode([PanelItem].self, forKey: .items)
         isCollapsed = try c.decode(Bool.self, forKey: .isCollapsed)
         alwaysOnTop = try c.decodeIfPresent(Bool.self, forKey: .alwaysOnTop) ?? false
+        isLocked = try c.decodeIfPresent(Bool.self, forKey: .isLocked) ?? false
         createdDate = try c.decode(Date.self, forKey: .createdDate)
     }
 }

@@ -3,6 +3,7 @@ import AppKit
 final class PanelTitleBar: NSView, NSTextFieldDelegate {
 
     private let titleLabel = NSTextField()
+    private let lockIcon = NSImageView()
     private let settingsButton = NSButton()
     private var config: PanelConfig
     var onTitleChanged: ((String) -> Void)?
@@ -20,8 +21,16 @@ final class PanelTitleBar: NSView, NSTextFieldDelegate {
     private func setupViews() {
         wantsLayer = true
 
+        // Lock icon
+        lockIcon.image = NSImage(systemSymbolName: "lock.fill", accessibilityDescription: "已锁定")
+        lockIcon.contentTintColor = .white.withAlphaComponent(0.6)
+        lockIcon.imageScaling = .scaleProportionallyDown
+        lockIcon.isHidden = !config.isLocked
+        lockIcon.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(lockIcon)
+
         // Title label — editable on double-click
-        titleLabel.stringValue = config.title
+        titleLabel.stringValue = config.displayTitle
         titleLabel.font = .systemFont(ofSize: 12, weight: .medium)
         titleLabel.textColor = .white.withAlphaComponent(0.9)
         titleLabel.backgroundColor = .clear
@@ -48,7 +57,12 @@ final class PanelTitleBar: NSView, NSTextFieldDelegate {
         addSubview(settingsButton)
 
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            lockIcon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            lockIcon.centerYAnchor.constraint(equalTo: centerYAnchor),
+            lockIcon.widthAnchor.constraint(equalToConstant: 14),
+            lockIcon.heightAnchor.constraint(equalToConstant: 14),
+
+            titleLabel.leadingAnchor.constraint(equalTo: lockIcon.trailingAnchor, constant: 4),
             titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: settingsButton.leadingAnchor, constant: -4),
 
@@ -128,12 +142,14 @@ final class PanelTitleBar: NSView, NSTextFieldDelegate {
 
     func updateTitle(_ title: String) {
         config.title = title
-        titleLabel.stringValue = title
+        titleLabel.stringValue = config.displayTitle
+        lockIcon.isHidden = !config.isLocked
     }
 
     func updateConfig(_ config: PanelConfig) {
         self.config = config
-        titleLabel.stringValue = config.title
+        titleLabel.stringValue = config.displayTitle
+        lockIcon.isHidden = !config.isLocked
     }
 
     @objc private func settingsClicked() {

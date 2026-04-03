@@ -128,6 +128,12 @@ final class FencePanelView: NSView {
     override func mouseDown(with event: NSEvent) {
         let local = convert(event.locationInWindow, from: nil)
         dragType = detectDragType(at: local)
+        if panel.panelConfig.isLocked && dragType != .none && dragType != .move {
+            dragType = .none
+        }
+        if panel.panelConfig.isLocked && dragType == .move {
+            dragType = .none
+        }
         if dragType != .none {
             dragOrigin = NSEvent.mouseLocation
             originalFrame = panel.frame
@@ -210,6 +216,10 @@ final class FencePanelView: NSView {
     }
 
     override func cursorUpdate(with event: NSEvent) {
+        if panel.panelConfig.isLocked {
+            NSCursor.arrow.set()
+            return
+        }
         let local = convert(event.locationInWindow, from: nil)
         switch detectDragType(at: local) {
         case .resizeLeft, .resizeRight:
@@ -307,6 +317,13 @@ final class FencePanelView: NSView {
 
         menu.addItem(.separator())
 
+        let lockTitle = panel.panelConfig.isLocked ? "解锁面板" : "锁定面板"
+        let lockIcon = panel.panelConfig.isLocked ? "lock.open" : "lock"
+        let lockItem = NSMenuItem(title: lockTitle, action: #selector(toggleLock), keyEquivalent: "")
+        lockItem.target = self
+        lockItem.image = NSImage(systemSymbolName: lockIcon, accessibilityDescription: lockTitle)
+        menu.addItem(lockItem)
+
         let settingsItem = NSMenuItem(title: "面板设置…", action: #selector(requestSettings), keyEquivalent: "")
         settingsItem.target = self
         menu.addItem(settingsItem)
@@ -333,5 +350,11 @@ final class FencePanelView: NSView {
 
     @objc private func requestDelete() {
         panel.panelDelegate?.panelDidRequestDelete(panel)
+    }
+
+    @objc private func toggleLock() {
+        panel.panelConfig.isLocked.toggle()
+        panel.applyConfigChanges()
+        panel.panelDelegate?.panelDidUpdateConfig(panel)
     }
 }

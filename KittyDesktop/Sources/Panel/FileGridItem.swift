@@ -1,6 +1,6 @@
 import AppKit
 
-final class FileGridItem: NSCollectionViewItem {
+final class FileGridItem: NSCollectionViewItem, NSDraggingSource {
 
     static let identifier = NSUserInterfaceItemIdentifier("FileGridItem")
 
@@ -63,13 +63,35 @@ final class FileGridItem: NSCollectionViewItem {
         }
     }
 
-    // MARK: - Double-Click → Open
+    // MARK: - Double-Click → Open / Drag Source
 
     override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
         if event.clickCount == 2, let item = panelItem {
             TrashHandler.openFile(item: item)
         }
+    }
+
+    override func mouseDragged(with event: NSEvent) {
+        guard let item = panelItem, let url = item.resolveURL() else {
+            super.mouseDragged(with: event)
+            return
+        }
+        let pasteboardItem = NSPasteboardItem()
+        pasteboardItem.setString(url.absoluteString, forType: .fileURL)
+
+        let draggingItem = NSDraggingItem(pasteboardWriter: pasteboardItem)
+        let iconImage = BookmarkManager.shared.icon(for: item, size: NSSize(width: 40, height: 40))
+        let iconRect = NSRect(origin: .zero, size: NSSize(width: 40, height: 40))
+        draggingItem.setDraggingFrame(iconRect, contents: iconImage)
+
+        view.beginDraggingSession(with: [draggingItem], event: event, source: self)
+    }
+
+    // MARK: - NSDraggingSource
+
+    func draggingSession(_ session: NSDraggingSession, sourceOperationMaskFor context: NSDraggingContext) -> NSDragOperation {
+        context == .outsideApplication ? .copy : .move
     }
 
     // MARK: - Right-Click Menu

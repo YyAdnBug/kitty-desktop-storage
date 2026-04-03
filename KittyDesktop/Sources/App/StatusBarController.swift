@@ -43,19 +43,13 @@ final class StatusBarController {
 
         menu.addItem(.separator())
 
-        let showAll = NSMenuItem(
-            title: "显示所有面板",
-            action: #selector(AppDelegate.showAllPanels),
-            keyEquivalent: ""
+        let toggleAll = NSMenuItem(
+            title: "显示/隐藏所有面板",
+            action: #selector(AppDelegate.toggleAllPanels),
+            keyEquivalent: "d"
         )
-        menu.addItem(showAll)
-
-        let hideAll = NSMenuItem(
-            title: "隐藏所有面板",
-            action: #selector(AppDelegate.hideAllPanels),
-            keyEquivalent: ""
-        )
-        menu.addItem(hideAll)
+        toggleAll.keyEquivalentModifierMask = [.option, .command]
+        menu.addItem(toggleAll)
 
         menu.addItem(.separator())
 

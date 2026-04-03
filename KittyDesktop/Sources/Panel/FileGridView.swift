@@ -1,6 +1,7 @@
 import AppKit
+import Quartz
 
-final class FileGridView: NSView, NSCollectionViewDataSource, NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout {
+final class FileGridView: NSView, NSCollectionViewDataSource, NSCollectionViewDelegate, NSCollectionViewDelegateFlowLayout, QLPreviewPanelDataSource, QLPreviewPanelDelegate {
 
     private var collectionView: NSCollectionView!
     private var scrollView: NSScrollView!
@@ -89,9 +90,15 @@ final class FileGridView: NSView, NSCollectionViewDataSource, NSCollectionViewDe
         // Selection highlight handled by FileGridItem.isSelected
     }
 
-    // MARK: - Delete Key
+    // MARK: - Keyboard Events
 
     override func keyDown(with event: NSEvent) {
+        // Space → Quick Look
+        if event.keyCode == 49 {
+            toggleQuickLook()
+            return
+        }
+        // Delete / Backspace
         if event.keyCode == 51 || event.keyCode == 117 {
             let selected = collectionView.selectionIndexPaths
             guard !selected.isEmpty else { return }
@@ -112,4 +119,37 @@ final class FileGridView: NSView, NSCollectionViewDataSource, NSCollectionViewDe
 
     override var acceptsFirstResponder: Bool { true }
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+
+    // MARK: - Quick Look
+
+    private var previewItems: [QLPreviewItem] = []
+
+    private func toggleQuickLook() {
+        guard let qlPanel = QLPreviewPanel.shared() else { return }
+        if qlPanel.isVisible {
+            qlPanel.orderOut(nil)
+        } else {
+            let selected = collectionView.selectionIndexPaths
+                .sorted { $0.item < $1.item }
+                .compactMap { ip -> URL? in
+                    guard ip.item < config.items.count else { return nil }
+                    return config.items[ip.item].resolveURL()
+                }
+            guard !selected.isEmpty else { return }
+            previewItems = selected.map { $0 as NSURL }
+            qlPanel.makeKeyAndOrderFront(nil)
+        }
+    }
+
+    override func acceptsPreviewPanelControl(_ panel: QLPreviewPanel!) -> Bool { true }
+    override func beginPreviewPanelControl(_ panel: QLPreviewPanel!) { panel.dataSource = self; panel.delegate = self }
+    override func endPreviewPanelControl(_ panel: QLPreviewPanel!) { panel.dataSource = nil; panel.delegate = nil }
+
+    func numberOfPreviewItems(in panel: QLPreviewPanel!) -> Int {
+        previewItems.count
+    }
+
+    func previewPanel(_ panel: QLPreviewPanel!, previewItemAt index: Int) -> (any QLPreviewItem)! {
+        previewItems[index]
+    }
 }

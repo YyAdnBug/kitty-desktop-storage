@@ -34,6 +34,16 @@ struct ChangelogView: View {
 
     static let entries: [ChangelogEntry] = [
         ChangelogEntry(
+            version: "1.0.0", build: "8", date: "2026-04-03",
+            items: [
+                ChangeItem(type: .added, text: "全局热键 ⌥⌘D 一键显示/隐藏所有面板"),
+                ChangeItem(type: .added, text: "Quick Look 预览：选中文件按空格键预览"),
+                ChangeItem(type: .added, text: "面板锁定：防止误拖动/误调整大小"),
+                ChangeItem(type: .added, text: "标题栏显示文件数量角标，如「工作（12）」"),
+                ChangeItem(type: .added, text: "从面板拖出文件到 Finder 或其他应用"),
+            ]
+        ),
+        ChangelogEntry(
             version: "1.0.0", build: "7", date: "2026-04-03",
             items: [
                 ChangeItem(type: .added, text: "开机自动启动功能（SMAppService）"),

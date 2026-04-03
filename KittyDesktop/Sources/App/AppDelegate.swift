@@ -14,6 +14,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             panelManager.createNewPanel()
         }
 
+        if GlobalPreferences.shared.hideOriginalAfterAdd {
+            FileHideManager.shared.hideAllManagedFiles()
+        }
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(screenParametersChanged),

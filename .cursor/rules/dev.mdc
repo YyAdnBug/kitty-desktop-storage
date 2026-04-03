@@ -1,0 +1,7 @@
+---
+alwaysApply: true
+---
+
+# 开发规范
+
+1、当有 bug 修复，或者功能新增时，应该同步修改添加 KittyDesktop/Sources/Settings/ChangelogView.swift

@@ -34,13 +34,21 @@ struct ChangelogView: View {
 
     static let entries: [ChangelogEntry] = [
         ChangelogEntry(
+            version: "1.0.0", build: "7", date: "2026-04-03",
+            items: [
+                ChangeItem(type: .added, text: "开机自动启动功能（SMAppService）"),
+                ChangeItem(type: .added, text: "偏好设置中新增「更新日志」按钮"),
+                ChangeItem(type: .improved, text: "隐藏原文件功能：开关切换时立即对所有面板已有文件生效"),
+                ChangeItem(type: .improved, text: "App 启动时自动同步隐藏状态"),
+                ChangeItem(type: .fixed, text: "已存在面板的文件开启隐藏后不生效"),
+            ]
+        ),
+        ChangelogEntry(
             version: "1.0.0", build: "5", date: "2026-04-02",
             items: [
                 ChangeItem(type: .added, text: "拖入面板后可隐藏原始文件（设置中开启）"),
                 ChangeItem(type: .added, text: "单个面板可独立设置「置顶显示」"),
                 ChangeItem(type: .added, text: "选中面板高亮边框"),
-                ChangeItem(type: .added, text: "开机自动启动功能"),
-                ChangeItem(type: .added, text: "更新日志"),
                 ChangeItem(type: .improved, text: "点击面板内容区域即可激活（无需双击）"),
                 ChangeItem(type: .improved, text: "贴边折叠/展开动画更流畅，修复快速进出闪烁"),
                 ChangeItem(type: .improved, text: "拖入文件失败时弹出提示"),

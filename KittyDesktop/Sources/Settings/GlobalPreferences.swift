@@ -43,7 +43,14 @@ final class GlobalPreferences: ObservableObject {
     }
 
     @Published var hideOriginalAfterAdd: Bool {
-        didSet { defaults.set(hideOriginalAfterAdd, forKey: Keys.hideOriginalAfterAdd) }
+        didSet {
+            defaults.set(hideOriginalAfterAdd, forKey: Keys.hideOriginalAfterAdd)
+            if hideOriginalAfterAdd {
+                FileHideManager.shared.hideAllManagedFiles()
+            } else {
+                FileHideManager.shared.unhideAllManagedFiles()
+            }
+        }
     }
 
     private init() {

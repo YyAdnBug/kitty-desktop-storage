@@ -35,6 +35,20 @@ final class FileHideManager {
         }
     }
 
+    /// Hide all files referenced by a list of items.
+    func hideAll(items: [PanelItem]) {
+        for item in items {
+            hideFile(for: item)
+        }
+    }
+
+    /// Hide every file across all panels.
+    func hideAllManagedFiles() {
+        for panel in PanelManager.shared.panels {
+            hideAll(items: panel.panelConfig.items)
+        }
+    }
+
     /// Unhide every file across all panels (safety fallback).
     func unhideAllManagedFiles() {
         for panel in PanelManager.shared.panels {

@@ -34,6 +34,16 @@ struct ChangelogView: View {
 
     static let entries: [ChangelogEntry] = [
         ChangelogEntry(
+            version: "1.0.0", build: "9", date: "2026-04-03",
+            items: [
+                ChangeItem(type: .fixed, text: "Quick Look 空格键预览现在正常工作"),
+                ChangeItem(type: .added, text: "面板内文件排序（按名称/类型/添加日期）"),
+                ChangeItem(type: .added, text: "双击标题栏折叠/展开面板（双击文字仍可编辑）"),
+                ChangeItem(type: .added, text: "面板布局导入/导出（JSON 格式备份与恢复）"),
+                ChangeItem(type: .improved, text: "文件缩略图优化：图片、PDF 等显示真实预览"),
+            ]
+        ),
+        ChangelogEntry(
             version: "1.0.0", build: "8", date: "2026-04-03",
             items: [
                 ChangeItem(type: .added, text: "全局热键 ⌥⌘D 一键显示/隐藏所有面板"),

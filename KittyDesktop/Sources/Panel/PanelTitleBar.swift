@@ -8,6 +8,7 @@ final class PanelTitleBar: NSView, NSTextFieldDelegate {
     private var config: PanelConfig
     var onTitleChanged: ((String) -> Void)?
     var onSettingsClicked: (() -> Void)?
+    var onDoubleClickBackground: (() -> Void)?
 
     init(config: PanelConfig) {
         self.config = config
@@ -99,7 +100,12 @@ final class PanelTitleBar: NSView, NSTextFieldDelegate {
 
     override func mouseDown(with event: NSEvent) {
         if event.clickCount == 2 {
-            enableEditing()
+            let local = convert(event.locationInWindow, from: nil)
+            if titleLabel.frame.contains(local) {
+                enableEditing()
+            } else {
+                onDoubleClickBackground?()
+            }
         } else {
             super.mouseDown(with: event)
         }

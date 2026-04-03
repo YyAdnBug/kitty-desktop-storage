@@ -101,6 +101,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         preferencesController.showWindow()
     }
 
+    @objc func exportLayout() {
+        PanelStore.shared.exportConfigs(panelManager.panels.map { $0.panelConfig })
+    }
+
+    @objc func importLayout() {
+        guard let configs = PanelStore.shared.importConfigs() else { return }
+
+        let alert = NSAlert()
+        alert.messageText = "导入 \(configs.count) 个面板"
+        alert.informativeText = "是否替换当前所有面板？选择「合并」将追加到现有面板。"
+        alert.addButton(withTitle: "替换")
+        alert.addButton(withTitle: "合并")
+        alert.addButton(withTitle: "取消")
+
+        let response = alert.runModal()
+        if response == .alertFirstButtonReturn {
+            panelManager.replaceAllPanels(with: configs)
+        } else if response == .alertSecondButtonReturn {
+            panelManager.appendPanels(configs)
+        }
+    }
+
     @objc private func screenParametersChanged() {
         panelManager.handleScreenChange()
     }

@@ -20,3 +20,6 @@ KittyDesktop/KittyDesktop.xcodeproj/
 
 # App data
 *.json.bak
+
+# Cursor
+.cursor

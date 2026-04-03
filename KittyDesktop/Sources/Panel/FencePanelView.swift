@@ -58,6 +58,10 @@ final class FencePanelView: NSView {
             guard let self else { return }
             self.panel.panelDelegate?.panelDidRequestSettings(self.panel)
         }
+
+        titleBar.onDoubleClickBackground = { [weak self] in
+            self?.panel.toggleFold()
+        }
     }
 
     // MARK: - Drawing
@@ -317,6 +321,20 @@ final class FencePanelView: NSView {
 
         menu.addItem(.separator())
 
+        let sortMenu = NSMenu()
+        for order in [SortOrder.manual, .byName, .byType, .byDateAdded] {
+            let item = NSMenuItem(title: order.rawValue, action: #selector(changeSortOrder(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = order
+            item.state = panel.panelConfig.sortOrder == order ? .on : .off
+            sortMenu.addItem(item)
+        }
+        let sortItem = NSMenuItem(title: "排序方式", action: nil, keyEquivalent: "")
+        sortItem.submenu = sortMenu
+        menu.addItem(sortItem)
+
+        menu.addItem(.separator())
+
         let lockTitle = panel.panelConfig.isLocked ? "解锁面板" : "锁定面板"
         let lockIcon = panel.panelConfig.isLocked ? "lock.open" : "lock"
         let lockItem = NSMenuItem(title: lockTitle, action: #selector(toggleLock), keyEquivalent: "")
@@ -350,6 +368,14 @@ final class FencePanelView: NSView {
 
     @objc private func requestDelete() {
         panel.panelDelegate?.panelDidRequestDelete(panel)
+    }
+
+    @objc private func changeSortOrder(_ sender: NSMenuItem) {
+        guard let order = sender.representedObject as? SortOrder else { return }
+        panel.panelConfig.sortOrder = order
+        fileGrid.reloadData(with: panel.panelConfig)
+        panel.applyConfigChanges()
+        panel.panelDelegate?.panelDidUpdateConfig(panel)
     }
 
     @objc private func toggleLock() {

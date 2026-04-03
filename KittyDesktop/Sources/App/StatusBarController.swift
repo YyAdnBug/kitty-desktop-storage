@@ -62,6 +62,22 @@ final class StatusBarController {
 
         menu.addItem(.separator())
 
+        let exportItem = NSMenuItem(
+            title: "导出面板布局…",
+            action: #selector(AppDelegate.exportLayout),
+            keyEquivalent: ""
+        )
+        menu.addItem(exportItem)
+
+        let importItem = NSMenuItem(
+            title: "导入面板布局…",
+            action: #selector(AppDelegate.importLayout),
+            keyEquivalent: ""
+        )
+        menu.addItem(importItem)
+
+        menu.addItem(.separator())
+
         let prefs = NSMenuItem(
             title: "偏好设置…",
             action: #selector(AppDelegate.showPreferences),

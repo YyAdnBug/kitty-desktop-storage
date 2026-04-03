@@ -15,6 +15,16 @@ final class FileGridView: NSView, NSCollectionViewDataSource, NSCollectionViewDe
         self.config = config
         super.init(frame: .zero)
         setupCollectionView()
+        NotificationCenter.default.addObserver(self, selector: #selector(thumbnailLoaded),
+                                               name: .thumbnailDidLoad, object: nil)
+    }
+
+    @objc private func thumbnailLoaded() {
+        collectionView.reloadData()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     @available(*, unavailable)
@@ -64,12 +74,13 @@ final class FileGridView: NSView, NSCollectionViewDataSource, NSCollectionViewDe
     // MARK: - NSCollectionViewDataSource
 
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        config.items.count
+        config.sortedItems.count
     }
 
     func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
         let cell = collectionView.makeItem(withIdentifier: FileGridItem.identifier, for: indexPath) as! FileGridItem
-        let item = config.items[indexPath.item]
+        let sorted = config.sortedItems
+        let item = sorted[indexPath.item]
         cell.configure(with: item)
 
         cell.onRemoveFromPanel = { [weak self] panelItem in
@@ -93,19 +104,15 @@ final class FileGridView: NSView, NSCollectionViewDataSource, NSCollectionViewDe
     // MARK: - Keyboard Events
 
     override func keyDown(with event: NSEvent) {
-        // Space → Quick Look
-        if event.keyCode == 49 {
-            toggleQuickLook()
-            return
-        }
         // Delete / Backspace
         if event.keyCode == 51 || event.keyCode == 117 {
             let selected = collectionView.selectionIndexPaths
             guard !selected.isEmpty else { return }
 
+            let sorted = config.sortedItems
             let items = selected.compactMap { indexPath -> PanelItem? in
-                guard indexPath.item < config.items.count else { return nil }
-                return config.items[indexPath.item]
+                guard indexPath.item < sorted.count else { return nil }
+                return sorted[indexPath.item]
             }
             guard !items.isEmpty else { return }
 
@@ -124,26 +131,31 @@ final class FileGridView: NSView, NSCollectionViewDataSource, NSCollectionViewDe
 
     private var previewItems: [QLPreviewItem] = []
 
-    private func toggleQuickLook() {
+    func toggleQuickLook() {
         guard let qlPanel = QLPreviewPanel.shared() else { return }
         if qlPanel.isVisible {
             qlPanel.orderOut(nil)
-        } else {
-            let selected = collectionView.selectionIndexPaths
-                .sorted { $0.item < $1.item }
-                .compactMap { ip -> URL? in
-                    guard ip.item < config.items.count else { return nil }
-                    return config.items[ip.item].resolveURL()
-                }
-            guard !selected.isEmpty else { return }
-            previewItems = selected.map { $0 as NSURL }
-            qlPanel.makeKeyAndOrderFront(nil)
+            return
         }
+
+        let sorted = config.sortedItems
+        let selected = collectionView.selectionIndexPaths
+            .sorted { $0.item < $1.item }
+            .compactMap { ip -> URL? in
+                guard ip.item < sorted.count else { return nil }
+                return sorted[ip.item].resolveURL()
+            }
+        guard !selected.isEmpty else { return }
+        previewItems = selected.map { $0 as NSURL }
+        qlPanel.dataSource = self
+        qlPanel.delegate = self
+        qlPanel.reloadData()
+        qlPanel.makeKeyAndOrderFront(nil)
     }
 
     override func acceptsPreviewPanelControl(_ panel: QLPreviewPanel!) -> Bool { true }
     override func beginPreviewPanelControl(_ panel: QLPreviewPanel!) { panel.dataSource = self; panel.delegate = self }
-    override func endPreviewPanelControl(_ panel: QLPreviewPanel!) { panel.dataSource = nil; panel.delegate = nil }
+    override func endPreviewPanelControl(_ panel: QLPreviewPanel!) {}
 
     func numberOfPreviewItems(in panel: QLPreviewPanel!) -> Int {
         previewItems.count

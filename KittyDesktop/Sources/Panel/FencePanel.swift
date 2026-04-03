@@ -108,6 +108,32 @@ final class FencePanel: NSPanel {
         fencePanelView.titleBar.updateConfig(panelConfig)
     }
 
+    func toggleFold() {
+        panelConfig.isFolded.toggle()
+        if panelConfig.isFolded {
+            expandedFrame = frame
+            panelConfig.expandedFrame = CodableRect(frame)
+            let foldedRect = NSRect(x: frame.origin.x, y: frame.maxY - PanelConfig.titleBarHeight,
+                                    width: frame.width, height: PanelConfig.titleBarHeight)
+            NSAnimationContext.runAnimationGroup { ctx in
+                ctx.duration = 0.25
+                ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                self.animator().setFrame(foldedRect, display: true)
+            }
+        } else {
+            let restored = expandedFrame ?? panelConfig.expandedFrame?.nsRect ?? frame
+            let unfoldRect = NSRect(x: frame.origin.x, y: restored.origin.y,
+                                    width: restored.width, height: restored.height)
+            NSAnimationContext.runAnimationGroup { ctx in
+                ctx.duration = 0.25
+                ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                self.animator().setFrame(unfoldRect, display: true)
+            }
+        }
+        syncFrameToConfig()
+        panelDelegate?.panelDidUpdateConfig(self)
+    }
+
     func updateFrame(to rect: NSRect) {
         panelConfig.frame = CodableRect(rect)
         setFrame(rect, display: true)
@@ -125,6 +151,10 @@ final class FencePanel: NSPanel {
     override func sendEvent(_ event: NSEvent) {
         if event.type == .leftMouseDown {
             PanelManager.shared.setActivePanel(self)
+        }
+        if event.type == .keyDown && event.keyCode == 49 {
+            fencePanelView.fileGrid.toggleQuickLook()
+            return
         }
         super.sendEvent(event)
     }

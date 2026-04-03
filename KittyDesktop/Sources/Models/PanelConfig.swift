@@ -4,6 +4,13 @@ enum SnapSide: String, Codable {
     case left, right, top, bottom
 }
 
+enum SortOrder: String, Codable {
+    case manual = "手动"
+    case byName = "按名称"
+    case byType = "按类型"
+    case byDateAdded = "按添加日期"
+}
+
 struct CodableRect: Codable, Equatable {
     var x: CGFloat
     var y: CGFloat
@@ -43,12 +50,32 @@ struct PanelConfig: Codable, Identifiable, Equatable {
     var snapSide: SnapSide?
     var items: [PanelItem]
     var isCollapsed: Bool
+    var isFolded: Bool
     var alwaysOnTop: Bool
     var isLocked: Bool
+    var sortOrder: SortOrder
     var createdDate: Date
 
     var displayTitle: String {
         items.isEmpty ? title : "\(title)（\(items.count)）"
+    }
+
+    var sortedItems: [PanelItem] {
+        switch sortOrder {
+        case .manual:
+            return items
+        case .byName:
+            return items.sorted { $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending }
+        case .byType:
+            return items.sorted {
+                let ext0 = ($0.resolveURL()?.pathExtension ?? "").lowercased()
+                let ext1 = ($1.resolveURL()?.pathExtension ?? "").lowercased()
+                if ext0 == ext1 { return $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending }
+                return ext0 < ext1
+            }
+        case .byDateAdded:
+            return items.sorted { $0.addedDate < $1.addedDate }
+        }
     }
 
     static let minWidth: CGFloat = 150
@@ -67,8 +94,10 @@ struct PanelConfig: Codable, Identifiable, Equatable {
         self.snapSide = nil
         self.items = []
         self.isCollapsed = false
+        self.isFolded = false
         self.alwaysOnTop = false
         self.isLocked = false
+        self.sortOrder = .manual
         self.createdDate = Date()
     }
 
@@ -78,7 +107,7 @@ struct PanelConfig: Codable, Identifiable, Equatable {
 
     enum CodingKeys: String, CodingKey {
         case id, title, opacity, backgroundColor, frame, expandedFrame
-        case snapSide, items, isCollapsed, alwaysOnTop, isLocked, createdDate
+        case snapSide, items, isCollapsed, isFolded, alwaysOnTop, isLocked, sortOrder, createdDate
     }
 
     init(from decoder: Decoder) throws {
@@ -92,8 +121,10 @@ struct PanelConfig: Codable, Identifiable, Equatable {
         snapSide = try c.decodeIfPresent(SnapSide.self, forKey: .snapSide)
         items = try c.decode([PanelItem].self, forKey: .items)
         isCollapsed = try c.decode(Bool.self, forKey: .isCollapsed)
+        isFolded = try c.decodeIfPresent(Bool.self, forKey: .isFolded) ?? false
         alwaysOnTop = try c.decodeIfPresent(Bool.self, forKey: .alwaysOnTop) ?? false
         isLocked = try c.decodeIfPresent(Bool.self, forKey: .isLocked) ?? false
+        sortOrder = try c.decodeIfPresent(SortOrder.self, forKey: .sortOrder) ?? .manual
         createdDate = try c.decode(Date.self, forKey: .createdDate)
     }
 }

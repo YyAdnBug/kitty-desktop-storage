@@ -162,6 +162,37 @@ final class PanelManager: FencePanelDelegate {
         PanelStore.shared.saveAll(configs)
     }
 
+    // MARK: - Import / Export
+
+    func replaceAllPanels(with newConfigs: [PanelConfig]) {
+        for panel in panels {
+            FileHideManager.shared.unhideAll(items: panel.panelConfig.items)
+            panel.orderOut(nil)
+        }
+        panels.removeAll()
+        configs.removeAll()
+
+        for config in newConfigs {
+            configs.append(config)
+            let panel = createPanelWindow(config: config)
+            panels.append(panel)
+            panel.orderFront(nil)
+        }
+        panelCounter = configs.count
+        PanelStore.shared.saveAll(configs)
+    }
+
+    func appendPanels(_ newConfigs: [PanelConfig]) {
+        for config in newConfigs {
+            configs.append(config)
+            let panel = createPanelWindow(config: config)
+            panels.append(panel)
+            panel.orderFront(nil)
+        }
+        panelCounter = configs.count
+        PanelStore.shared.saveAll(configs)
+    }
+
     // MARK: - Screen Change
 
     func handleScreenChange() {

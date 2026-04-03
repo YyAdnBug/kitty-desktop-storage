@@ -59,6 +59,15 @@ final class StatusBarController {
 
         menu.addItem(.separator())
 
+        let unhideAll = NSMenuItem(
+            title: "恢复所有隐藏文件",
+            action: #selector(AppDelegate.unhideAllFiles),
+            keyEquivalent: ""
+        )
+        menu.addItem(unhideAll)
+
+        menu.addItem(.separator())
+
         let prefs = NSMenuItem(
             title: "偏好设置…",
             action: #selector(AppDelegate.showPreferences),

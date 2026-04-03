@@ -271,6 +271,9 @@ final class FencePanelView: NSView {
             }
             if let item = try? PanelItem(url: url) {
                 panel.panelConfig.items.append(item)
+                if GlobalPreferences.shared.hideOriginalAfterAdd {
+                    FileHideManager.shared.hideFile(for: item)
+                }
                 added = true
             } else {
                 failedCount += 1

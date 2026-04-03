@@ -1,0 +1,141 @@
+import SwiftUI
+
+struct ChangelogEntry: Identifiable {
+    let id = UUID()
+    let version: String
+    let build: String
+    let date: String
+    let items: [ChangeItem]
+}
+
+struct ChangeItem: Identifiable {
+    let id = UUID()
+    let type: ChangeType
+    let text: String
+}
+
+enum ChangeType: String {
+    case added = "新增"
+    case fixed = "修复"
+    case improved = "优化"
+    case removed = "移除"
+
+    var color: Color {
+        switch self {
+        case .added: return .green
+        case .fixed: return .red
+        case .improved: return .blue
+        case .removed: return .gray
+        }
+    }
+}
+
+struct ChangelogView: View {
+
+    static let entries: [ChangelogEntry] = [
+        ChangelogEntry(
+            version: "1.0.0", build: "5", date: "2026-04-02",
+            items: [
+                ChangeItem(type: .added, text: "拖入面板后可隐藏原始文件（设置中开启）"),
+                ChangeItem(type: .added, text: "单个面板可独立设置「置顶显示」"),
+                ChangeItem(type: .added, text: "选中面板高亮边框"),
+                ChangeItem(type: .added, text: "开机自动启动功能"),
+                ChangeItem(type: .added, text: "更新日志"),
+                ChangeItem(type: .improved, text: "点击面板内容区域即可激活（无需双击）"),
+                ChangeItem(type: .improved, text: "贴边折叠/展开动画更流畅，修复快速进出闪烁"),
+                ChangeItem(type: .improved, text: "拖入文件失败时弹出提示"),
+                ChangeItem(type: .fixed, text: "面板名称不允许为空"),
+                ChangeItem(type: .fixed, text: "右键菜单「新建面板」可能不触发"),
+                ChangeItem(type: .fixed, text: "修改透明度不再覆盖折叠状态的半透明效果"),
+                ChangeItem(type: .fixed, text: "App Icon 512x512@2x 尺寸警告"),
+            ]
+        ),
+        ChangelogEntry(
+            version: "1.0.0", build: "1", date: "2026-04-01",
+            items: [
+                ChangeItem(type: .added, text: "桌面面板：创建多个可拖动、可调整大小的收纳区域"),
+                ChangeItem(type: .added, text: "文件拖放：将文件和文件夹拖入面板管理"),
+                ChangeItem(type: .added, text: "面板设置：改名、调整透明度、更换背景颜色"),
+                ChangeItem(type: .added, text: "贴边收缩：拖到屏幕边缘自动折叠，悬停展开"),
+                ChangeItem(type: .added, text: "右键菜单：打开、在 Finder 中显示、移除、删除"),
+                ChangeItem(type: .added, text: "全局偏好：置顶显示、多桌面可见"),
+                ChangeItem(type: .added, text: "DMG 打包脚本，自动递增构建号"),
+            ]
+        ),
+    ]
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text("更新日志")
+                    .font(.title2.bold())
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+            .padding(.bottom, 12)
+
+            Divider()
+
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 20) {
+                    ForEach(Self.entries) { entry in
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack(alignment: .firstTextBaseline) {
+                                Text("v\(entry.version)")
+                                    .font(.headline)
+                                Text("build \(entry.build)")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.secondary.opacity(0.12))
+                                    .cornerRadius(4)
+                                Spacer()
+                                Text(entry.date)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+
+                            ForEach(entry.items) { item in
+                                HStack(alignment: .top, spacing: 8) {
+                                    Text(item.type.rawValue)
+                                        .font(.caption2.bold())
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 2)
+                                        .background(item.type.color.opacity(0.8))
+                                        .cornerRadius(4)
+                                        .frame(width: 40)
+
+                                    Text(item.text)
+                                        .font(.body)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 20)
+
+                        if entry.id != Self.entries.last?.id {
+                            Divider()
+                                .padding(.horizontal, 20)
+                        }
+                    }
+                }
+                .padding(.vertical, 16)
+            }
+
+            Divider()
+
+            HStack {
+                Spacer()
+                Button("关闭") { dismiss() }
+                    .keyboardShortcut(.cancelAction)
+            }
+            .padding(16)
+        }
+        .frame(width: 460, height: 480)
+    }
+}

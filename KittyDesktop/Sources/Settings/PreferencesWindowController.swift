@@ -17,7 +17,7 @@ final class PreferencesWindowController {
         let window = NSWindow(contentViewController: hostingController)
         window.title = "Kitty 桌面收纳 - 偏好设置"
         window.styleMask = [.titled, .closable]
-        window.setContentSize(NSSize(width: 400, height: 280))
+        window.setContentSize(NSSize(width: 400, height: 360))
         window.center()
         window.isReleasedWhenClosed = false
         window.level = .floating
@@ -34,6 +34,7 @@ final class PreferencesWindowController {
 
 struct PreferencesContentView: View {
     @ObservedObject private var prefs = GlobalPreferences.shared
+    @State private var showChangelog = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -52,6 +53,8 @@ struct PreferencesContentView: View {
                         .foregroundColor(.secondary)
                 }
                 Spacer()
+                Button("更新日志") { showChangelog = true }
+                    .controlSize(.small)
             }
             .padding(.bottom, 16)
 
@@ -82,18 +85,27 @@ struct PreferencesContentView: View {
                 }
                 .toggleStyle(.switch)
 
-                Toggle(isOn: $prefs.launchAtLogin) {
+                Toggle(isOn: $prefs.hideOriginalAfterAdd) {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("开机自动启动")
+                        Text("拖入后隐藏原文件")
                             .font(.body)
-                        Text("登录后自动运行（即将支持）")
+                        Text("文件拖入面板后，在原位置隐藏（从面板移除后自动恢复）")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
                 }
                 .toggleStyle(.switch)
-                .disabled(true)
-                .opacity(0.5)
+
+                Toggle(isOn: $prefs.launchAtLogin) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("开机自动启动")
+                            .font(.body)
+                        Text("登录后自动运行 Kitty 桌面收纳")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .toggleStyle(.switch)
             }
 
             Spacer()
@@ -110,6 +122,9 @@ struct PreferencesContentView: View {
             }
         }
         .padding(24)
-        .frame(width: 400, height: 280)
+        .frame(width: 400, height: 360)
+        .sheet(isPresented: $showChangelog) {
+            ChangelogView()
+        }
     }
 }

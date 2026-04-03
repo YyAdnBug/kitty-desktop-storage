@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import ServiceManagement
 
 final class GlobalPreferences: ObservableObject {
     static let shared = GlobalPreferences()
@@ -8,8 +9,8 @@ final class GlobalPreferences: ObservableObject {
 
     private enum Keys {
         static let alwaysOnTop = "alwaysOnTop"
-        static let launchAtLogin = "launchAtLogin"
         static let showInAllSpaces = "showInAllSpaces"
+        static let hideOriginalAfterAdd = "hideOriginalAfterAdd"
     }
 
     @Published var alwaysOnTop: Bool {
@@ -20,7 +21,18 @@ final class GlobalPreferences: ObservableObject {
     }
 
     @Published var launchAtLogin: Bool {
-        didSet { defaults.set(launchAtLogin, forKey: Keys.launchAtLogin) }
+        didSet {
+            do {
+                if launchAtLogin {
+                    try SMAppService.mainApp.register()
+                } else {
+                    try SMAppService.mainApp.unregister()
+                }
+            } catch {
+                NSLog("[KittyDesktop] SMAppService error: \(error)")
+                launchAtLogin = !launchAtLogin
+            }
+        }
     }
 
     @Published var showInAllSpaces: Bool {
@@ -30,9 +42,14 @@ final class GlobalPreferences: ObservableObject {
         }
     }
 
+    @Published var hideOriginalAfterAdd: Bool {
+        didSet { defaults.set(hideOriginalAfterAdd, forKey: Keys.hideOriginalAfterAdd) }
+    }
+
     private init() {
-        self.alwaysOnTop = defaults.bool(forKey: Keys.alwaysOnTop)  // default: false
-        self.launchAtLogin = defaults.bool(forKey: Keys.launchAtLogin)
+        self.alwaysOnTop = defaults.bool(forKey: Keys.alwaysOnTop)
+        self.launchAtLogin = SMAppService.mainApp.status == .enabled
+        self.hideOriginalAfterAdd = defaults.bool(forKey: Keys.hideOriginalAfterAdd)
 
         if defaults.object(forKey: Keys.showInAllSpaces) == nil {
             defaults.set(true, forKey: Keys.showInAllSpaces)

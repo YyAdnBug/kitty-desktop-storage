@@ -1,0 +1,153 @@
+---
+description: Kitty 桌面收纳 — macOS 桌面文件管理器开发规范
+globs: ["KittyDesktop/**/*.swift", "scripts/**"]
+alwaysApply: false
+---
+
+# Kitty 桌面收纳 — 开发规范
+
+## 项目概述
+
+macOS 桌面文件收纳工具，类似 Windows 上的 Stardock Fences。用户可以在桌面创建多个可拖动、可调整大小的面板区域，将文件和文件夹拖入其中进行分类管理。
+
+## 技术栈
+
+- **语言**: Swift 5.9
+- **框架**: AppKit (主体) + SwiftUI (设置界面、面板设置弹窗)
+- **最低支持**: macOS 13.0
+- **构建工具**: xcodegen (project.yml → Xcode 项目)
+- **打包**: `scripts/build_dmg.sh` (自动递增构建号)
+
+## 项目结构
+
+```
+KittyDesktop/
+├── project.yml              # xcodegen 项目定义
+├── Resources/
+│   ├── Info.plist
+│   ├── KittyDesktop.entitlements
+│   ├── Assets.xcassets/      # App Icon + MenuBar Icon
+│   └── menubar_icon.png
+└── Sources/
+    ├── App/
+    │   ├── main.swift              # 手动入口 (nibless, LSUIElement)
+    │   ├── AppDelegate.swift       # 生命周期 + 菜单 actions
+    │   ├── StatusBarController.swift # 状态栏图标和菜单
+    │   └── PanelManager.swift      # 面板创建/删除/配置同步
+    ├── Models/
+    │   ├── PanelConfig.swift       # 面板配置 (Codable)
+    │   ├── PanelItem.swift         # 文件引用 (Security-Scoped Bookmark)
+    │   └── CodableColor.swift      # NSColor 序列化
+    ├── Panel/
+    │   ├── FencePanel.swift        # NSPanel 子类 (窗口行为)
+    │   ├── FencePanelView.swift    # 主视图 (拖拽/调整/拖放)
+    │   ├── PanelTitleBar.swift     # 标题栏 (双击编辑/设置按钮)
+    │   ├── FileGridView.swift      # 文件网格 (NSCollectionView)
+    │   └── FileGridItem.swift      # 单文件展示 + 右键菜单
+    ├── EdgeSnap/
+    │   └── EdgeSnapper.swift       # 贴边折叠/展开逻辑
+    ├── FileManagement/
+    │   ├── BookmarkManager.swift   # Security-Scoped Bookmark 管理
+    │   ├── TrashHandler.swift      # 打开/显示/回收站操作
+    │   └── FileHideManager.swift   # 文件隐藏/恢复 (isHidden)
+    ├── Storage/
+    │   └── PanelStore.swift        # JSON 持久化 (防抖保存)
+    └── Settings/
+        ├── GlobalPreferences.swift          # 全局偏好 (UserDefaults + SMAppService)
+        ├── PanelSettingsView.swift           # 单面板设置弹窗 (SwiftUI)
+        ├── PreferencesWindowController.swift # 全局偏好窗口
+        └── ChangelogView.swift              # 更新日志
+```
+
+## 关键架构约定
+
+### 窗口层级
+- 默认: `CGWindowLevelForKey(.desktopIconWindow) + 1` — 在桌面图标之上，普通窗口之下
+- 置顶: `.floating` — 全局或单面板可配置
+- 面板使用 `NSPanel` + `[.borderless, .nonactivatingPanel]`
+
+### 数据持久化
+- 面板配置: JSON 文件 `~/Library/Application Support/KittyDesktop/panels.json`
+- 全局偏好: `UserDefaults`
+- 文件引用: Security-Scoped Bookmark Data (支持沙盒外文件访问)
+
+### 应用类型
+- `LSUIElement = true`: Agent App，无 Dock 图标
+- 入口: `main.swift` 手动创建 `NSApplication` + `setActivationPolicy(.accessory)`
+- 交互: 通过状态栏菜单图标
+
+## 编码规范
+
+### Swift 风格
+- 使用 `final class` 除非明确需要继承
+- 优先使用 `guard let` 安全解包，避免 `!` 强制解包
+- 自定义 delegate 不要覆盖系统属性名 (如 NSWindow.delegate)
+
+### NSView 子类必须实现
+- `acceptsFirstMouse(for:)` 返回 `true` — 避免点击两次才能交互
+- `wantsLayer = true` — 在使用 `layer?.cornerRadius` 等 CA 属性之前
+
+### 事件处理
+- 面板级别事件拦截: 在 `FencePanel.sendEvent(_:)` 中处理，确保点击面板任意区域都能响应
+- 视图级别事件: 各 NSView 子类的 `mouseDown` / `mouseDragged` / `mouseUp`
+
+### 新增 Codable 字段兼容性
+给 `PanelConfig` 添加新字段时，必须在 `init(from decoder:)` 中使用 `decodeIfPresent` 并提供默认值，确保旧版本 JSON 不会解码失败:
+```swift
+newField = try c.decodeIfPresent(Bool.self, forKey: .newField) ?? false
+```
+
+## 更新日志规范
+
+更新日志位于 `Sources/Settings/ChangelogView.swift` 的 `ChangelogView.entries` 静态数组中。
+
+### 发版时更新步骤
+1. 在 `entries` 数组**顶部**添加新的 `ChangelogEntry`
+2. 填写 `version` (CFBundleShortVersionString)、`build` (CFBundleVersion)、`date`
+3. 每条变更使用 `ChangeItem`，选择对应的 `ChangeType`:
+
+| ChangeType | 标签 | 颜色 | 用途 |
+|------------|------|------|------|
+| `.added` | 新增 | 绿色 | 全新功能 |
+| `.fixed` | 修复 | 红色 | Bug 修复 |
+| `.improved` | 优化 | 蓝色 | 已有功能改进、性能优化 |
+| `.removed` | 移除 | 灰色 | 移除的功能 |
+
+### 示例
+```swift
+ChangelogEntry(
+    version: "1.1.0", build: "7", date: "2026-04-10",
+    items: [
+        ChangeItem(type: .added, text: "支持自定义面板图标"),
+        ChangeItem(type: .improved, text: "拖拽性能优化 50%"),
+        ChangeItem(type: .fixed, text: "多屏幕切换后面板位置偏移"),
+    ]
+),
+```
+
+## 构建与打包
+
+### 日常开发
+```bash
+cd KittyDesktop
+xcodegen generate
+# 在 Xcode 中打开 KittyDesktop.xcodeproj 或:
+xcodebuild -project KittyDesktop.xcodeproj -scheme KittyDesktop -configuration Debug build
+```
+
+### 打包 DMG
+```bash
+./scripts/build_dmg.sh
+```
+脚本会自动:
+1. 读取 `project.yml` 中的 `CFBundleVersion` 并 +1
+2. 同步更新 `project.yml` 和 `Info.plist`
+3. 编译 Release 版本
+4. 生成 `build/KittyDesktop_{version}_b{build}.dmg`
+5. 编译失败时自动回滚构建号
+
+### 版本号体系
+| 字段 | 示例 | 说明 | 变更方式 |
+|------|------|------|---------|
+| CFBundleShortVersionString | 1.0.0 | 用户可见版本 | 手动修改 project.yml |
+| CFBundleVersion | 6 | 内部构建号 | build_dmg.sh 自动 +1 |

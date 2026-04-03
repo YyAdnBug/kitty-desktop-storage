@@ -27,6 +27,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         BookmarkManager.shared.stopAccessingAll()
     }
 
+    @objc func unhideAllFiles() {
+        FileHideManager.shared.unhideAllManagedFiles()
+        let alert = NSAlert()
+        alert.messageText = "已恢复所有文件"
+        alert.informativeText = "所有被隐藏的原始文件已恢复显示。"
+        alert.alertStyle = .informational
+        alert.runModal()
+    }
+
     func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
         true
     }

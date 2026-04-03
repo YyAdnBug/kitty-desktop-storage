@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		077030EB692400D5772434F2 /* FencePanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE9022D52F192577C4BDF4F /* FencePanelView.swift */; };
 		0848F1DE5F2BE65FF5FFA5C6 /* PanelStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A3E315107462FF7F2ADA41 /* PanelStore.swift */; };
+		0B5ECB77D1F9AB9C6F0E8899 /* FileHideManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EDC08F0334183382B029854 /* FileHideManager.swift */; };
 		2673C3D1A887DC2758E8DEE4 /* BookmarkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B119A84DF1A9902664FE39E /* BookmarkManager.swift */; };
 		2ACB4CA65FEDF1DE31A2389A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9380D82E0EF8914784AFBEB /* AppDelegate.swift */; };
 		2B303B41375E94D303B06C65 /* FencePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793B547529E1BD1B33491FA2 /* FencePanel.swift */; };
@@ -20,6 +21,7 @@
 		67D6764BC62E006B8E5B6781 /* PanelItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C610DE6CD5F960CA7A22DA /* PanelItem.swift */; };
 		833DE37C06D1958F2AD699D6 /* FileGridItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBA0662FDB09177B61CFDC4B /* FileGridItem.swift */; };
 		96239BC5E3EC2FDD468B9132 /* PanelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B661DA7F26BB13983953FA /* PanelConfig.swift */; };
+		96F2DBA1DD30504BDE86F3AA /* ChangelogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42B56628031BBAE10A4391C3 /* ChangelogView.swift */; };
 		9C1FF0ADC2504A0AC9411F8E /* FileGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BB7DD5294E9C819982DF2C5 /* FileGridView.swift */; };
 		B721AD92A6314B18C4531674 /* menubar_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0591BF3C29D837CD4137BD5F /* menubar_icon.png */; };
 		B970D1DC6A82A5DD14E35EF1 /* CodableColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E19462E9595E89986A8945 /* CodableColor.swift */; };
@@ -38,9 +40,11 @@
 		17BB281C18E1C792A14578AD /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		2B119A84DF1A9902664FE39E /* BookmarkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkManager.swift; sourceTree = "<group>"; };
 		35CDF617B0FE0897F3334B35 /* KittyDesktop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KittyDesktop.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		42B56628031BBAE10A4391C3 /* ChangelogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangelogView.swift; sourceTree = "<group>"; };
 		62A579565DCA60E17ED8BA88 /* PreferencesWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesWindowController.swift; sourceTree = "<group>"; };
 		793B547529E1BD1B33491FA2 /* FencePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FencePanel.swift; sourceTree = "<group>"; };
 		7B1145846CF16E213F38BBE2 /* GlobalPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalPreferences.swift; sourceTree = "<group>"; };
+		7EDC08F0334183382B029854 /* FileHideManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHideManager.swift; sourceTree = "<group>"; };
 		7F02A4CF157CFFBF95109E63 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		93E19462E9595E89986A8945 /* CodableColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableColor.swift; sourceTree = "<group>"; };
 		9A978AE2541863B6067F2F41 /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
@@ -59,6 +63,7 @@
 		06A534EE71044106ACCBB2D5 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				42B56628031BBAE10A4391C3 /* ChangelogView.swift */,
 				7B1145846CF16E213F38BBE2 /* GlobalPreferences.swift */,
 				B50040158A73F95C2297FEB8 /* PanelSettingsView.swift */,
 				62A579565DCA60E17ED8BA88 /* PreferencesWindowController.swift */,
@@ -103,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				2B119A84DF1A9902664FE39E /* BookmarkManager.swift */,
+				7EDC08F0334183382B029854 /* FileHideManager.swift */,
 				AAEEDFDB9139654AED029C0F /* TrashHandler.swift */,
 			);
 			path = FileManagement;
@@ -234,12 +240,14 @@
 			files = (
 				2ACB4CA65FEDF1DE31A2389A /* AppDelegate.swift in Sources */,
 				2673C3D1A887DC2758E8DEE4 /* BookmarkManager.swift in Sources */,
+				96F2DBA1DD30504BDE86F3AA /* ChangelogView.swift in Sources */,
 				B970D1DC6A82A5DD14E35EF1 /* CodableColor.swift in Sources */,
 				53581F7A2E4B3B6DBC06803C /* EdgeSnapper.swift in Sources */,
 				2B303B41375E94D303B06C65 /* FencePanel.swift in Sources */,
 				077030EB692400D5772434F2 /* FencePanelView.swift in Sources */,
 				833DE37C06D1958F2AD699D6 /* FileGridItem.swift in Sources */,
 				9C1FF0ADC2504A0AC9411F8E /* FileGridView.swift in Sources */,
+				0B5ECB77D1F9AB9C6F0E8899 /* FileHideManager.swift in Sources */,
 				FD34243A3549B1430E01D62D /* GlobalPreferences.swift in Sources */,
 				96239BC5E3EC2FDD468B9132 /* PanelConfig.swift in Sources */,
 				67D6764BC62E006B8E5B6781 /* PanelItem.swift in Sources */,

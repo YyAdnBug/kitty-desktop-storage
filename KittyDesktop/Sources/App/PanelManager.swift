@@ -76,6 +76,7 @@ final class PanelManager: FencePanelDelegate {
 
         panel.fencePanelView.fileGrid.onItemRemoved = { [weak self, weak panel] item in
             guard let panel else { return }
+            FileHideManager.shared.unhideFile(for: item)
             panel.panelConfig.items.removeAll { $0.id == item.id }
             panel.fencePanelView.fileGrid.reloadData(with: panel.panelConfig)
             self?.syncConfig(for: panel)
@@ -112,6 +113,7 @@ final class PanelManager: FencePanelDelegate {
     }
 
     private func performDeletePanel(_ panel: FencePanel) {
+        FileHideManager.shared.unhideAll(items: panel.panelConfig.items)
         panel.orderOut(nil)
         panels.removeAll { $0 === panel }
         configs.removeAll { $0.id == panel.panelConfig.id }

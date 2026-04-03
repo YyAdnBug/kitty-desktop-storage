@@ -17,7 +17,7 @@ final class PreferencesWindowController {
         let window = NSWindow(contentViewController: hostingController)
         window.title = "Kitty 桌面收纳 - 偏好设置"
         window.styleMask = [.titled, .closable]
-        window.setContentSize(NSSize(width: 400, height: 360))
+        window.setContentSize(NSSize(width: 400, height: 420))
         window.center()
         window.isReleasedWhenClosed = false
         window.level = .floating
@@ -96,6 +96,17 @@ struct PreferencesContentView: View {
                 }
                 .toggleStyle(.switch)
 
+                Toggle(isOn: $prefs.useBlurEffect) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("毛玻璃效果")
+                            .font(.body)
+                        Text("面板背景使用系统级模糊效果")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .toggleStyle(.switch)
+
                 Toggle(isOn: $prefs.launchAtLogin) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("开机自动启动")
@@ -122,7 +133,7 @@ struct PreferencesContentView: View {
             }
         }
         .padding(24)
-        .frame(width: 400, height: 360)
+        .frame(width: 400, height: 420)
         .sheet(isPresented: $showChangelog) {
             ChangelogView()
         }

@@ -147,6 +147,8 @@ final class FileGridView: NSView, NSCollectionViewDataSource, NSCollectionViewDe
             }
         guard !selected.isEmpty else { return }
         previewItems = selected.map { $0 as NSURL }
+
+        NSApp.activate(ignoringOtherApps: true)
         qlPanel.dataSource = self
         qlPanel.delegate = self
         qlPanel.reloadData()
@@ -163,5 +165,14 @@ final class FileGridView: NSView, NSCollectionViewDataSource, NSCollectionViewDe
 
     func previewPanel(_ panel: QLPreviewPanel!, previewItemAt index: Int) -> (any QLPreviewItem)! {
         previewItems[index]
+    }
+
+    func previewPanel(_ panel: QLPreviewPanel!, sourceFrameOnScreenFor item: (any QLPreviewItem)?) -> NSRect {
+        guard let url = (item as? NSURL) as URL? else { return .zero }
+        let sorted = config.sortedItems
+        guard let itemIndex = sorted.firstIndex(where: { $0.resolveURL() == url }),
+              let cell = collectionView.item(at: itemIndex) else { return .zero }
+        let cellRect = cell.view.convert(cell.view.bounds, to: nil)
+        return window?.convertToScreen(cellRect) ?? .zero
     }
 }

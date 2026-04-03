@@ -5,6 +5,7 @@ final class FencePanelView: NSView {
     unowned let panel: FencePanel
     let titleBar: PanelTitleBar
     let fileGrid: FileGridView
+    private let blurView: NSVisualEffectView
 
     private let resizeMargin: CGFloat = 6.0
     private var dragType: DragType = .none
@@ -23,11 +24,18 @@ final class FencePanelView: NSView {
         self.panel = panel
         self.titleBar = PanelTitleBar(config: panel.panelConfig)
         self.fileGrid = FileGridView(config: panel.panelConfig)
+        self.blurView = NSVisualEffectView()
         super.init(frame: panel.panelConfig.frame.nsRect)
         wantsLayer = true
         setupSubviews()
         setupTrackingArea()
         registerForDraggedTypes([.fileURL])
+        updateBlurEffect()
+
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(onPreferencesChanged),
+            name: .preferencesDidChange, object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -36,6 +44,15 @@ final class FencePanelView: NSView {
     // MARK: - Layout
 
     private func setupSubviews() {
+        blurView.material = .hudWindow
+        blurView.blendingMode = .behindWindow
+        blurView.state = .active
+        blurView.wantsLayer = true
+        blurView.layer?.cornerRadius = 10
+        blurView.layer?.masksToBounds = true
+        blurView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(blurView)
+
         addSubview(titleBar)
         addSubview(fileGrid)
 
@@ -43,6 +60,11 @@ final class FencePanelView: NSView {
         fileGrid.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
+            blurView.topAnchor.constraint(equalTo: topAnchor),
+            blurView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            blurView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            blurView.bottomAnchor.constraint(equalTo: bottomAnchor),
+
             titleBar.topAnchor.constraint(equalTo: topAnchor),
             titleBar.leadingAnchor.constraint(equalTo: leadingAnchor),
             titleBar.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -59,7 +81,7 @@ final class FencePanelView: NSView {
             self.panel.panelDelegate?.panelDidRequestSettings(self.panel)
         }
 
-        titleBar.onDoubleClickBackground = { [weak self] in
+        titleBar.onDoubleClick = { [weak self] in
             self?.panel.toggleFold()
         }
     }
@@ -382,5 +404,21 @@ final class FencePanelView: NSView {
         panel.panelConfig.isLocked.toggle()
         panel.applyConfigChanges()
         panel.panelDelegate?.panelDidUpdateConfig(panel)
+    }
+
+    // MARK: - Blur Effect
+
+    func updateBlurEffect() {
+        let enabled = GlobalPreferences.shared.useBlurEffect
+        blurView.isHidden = !enabled
+    }
+
+    @objc private func onPreferencesChanged() {
+        updateBlurEffect()
+        needsDisplay = true
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }

@@ -44,6 +44,10 @@ final class FencePanel: NSPanel {
         alphaValue = CGFloat(panelConfig.opacity)
         minSize = NSSize(width: PanelConfig.minWidth, height: PanelConfig.minHeight)
 
+        if panelConfig.isFolded, let ef = panelConfig.expandedFrame {
+            foldedExpandedFrame = ef.nsRect
+        }
+
         if panelConfig.isCollapsed, let snap = panelConfig.snapSide {
             expandedFrame = panelConfig.expandedFrame?.nsRect ?? frame
             EdgeSnapper.applyCollapsedFrame(to: self, side: snap, animated: false)
@@ -108,29 +112,31 @@ final class FencePanel: NSPanel {
         fencePanelView.titleBar.updateConfig(panelConfig)
     }
 
+    private var foldedExpandedFrame: NSRect?
+
     func toggleFold() {
         panelConfig.isFolded.toggle()
         if panelConfig.isFolded {
-            expandedFrame = frame
-            panelConfig.expandedFrame = CodableRect(frame)
-            let foldedRect = NSRect(x: frame.origin.x, y: frame.maxY - PanelConfig.titleBarHeight,
-                                    width: frame.width, height: PanelConfig.titleBarHeight)
-            NSAnimationContext.runAnimationGroup { ctx in
-                ctx.duration = 0.25
-                ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-                self.animator().setFrame(foldedRect, display: true)
-            }
+            let fullFrame = frame
+            foldedExpandedFrame = fullFrame
+            let foldedRect = NSRect(x: fullFrame.origin.x,
+                                    y: fullFrame.maxY - PanelConfig.titleBarHeight,
+                                    width: fullFrame.width,
+                                    height: PanelConfig.titleBarHeight)
+            panelConfig.frame = CodableRect(foldedRect)
+            panelConfig.expandedFrame = CodableRect(fullFrame)
+            setFrame(foldedRect, display: true, animate: true)
         } else {
-            let restored = expandedFrame ?? panelConfig.expandedFrame?.nsRect ?? frame
-            let unfoldRect = NSRect(x: frame.origin.x, y: restored.origin.y,
-                                    width: restored.width, height: restored.height)
-            NSAnimationContext.runAnimationGroup { ctx in
-                ctx.duration = 0.25
-                ctx.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-                self.animator().setFrame(unfoldRect, display: true)
-            }
+            let restored = foldedExpandedFrame ?? panelConfig.expandedFrame?.nsRect
+                ?? NSRect(x: frame.origin.x,
+                          y: frame.origin.y - PanelConfig.defaultHeight + PanelConfig.titleBarHeight,
+                          width: frame.width,
+                          height: PanelConfig.defaultHeight)
+            panelConfig.frame = CodableRect(restored)
+            panelConfig.expandedFrame = nil
+            foldedExpandedFrame = nil
+            setFrame(restored, display: true, animate: true)
         }
-        syncFrameToConfig()
         panelDelegate?.panelDidUpdateConfig(self)
     }
 
@@ -152,15 +158,16 @@ final class FencePanel: NSPanel {
         if event.type == .leftMouseDown {
             PanelManager.shared.setActivePanel(self)
         }
-        if event.type == .keyDown && event.keyCode == 49 {
+        if event.type == .keyDown && event.keyCode == 49 && !isTextInputActive {
             fencePanelView.fileGrid.toggleQuickLook()
             return
         }
         super.sendEvent(event)
     }
 
-    override func cancelOperation(_ sender: Any?) {
-        fencePanelView.titleBar.cancelEditing()
+    private var isTextInputActive: Bool {
+        guard let responder = firstResponder else { return false }
+        return responder is NSTextView || responder is NSTextField
     }
 
     deinit {

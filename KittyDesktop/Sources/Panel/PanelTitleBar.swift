@@ -1,14 +1,13 @@
 import AppKit
 
-final class PanelTitleBar: NSView, NSTextFieldDelegate {
+final class PanelTitleBar: NSView {
 
     private let titleLabel = NSTextField()
     private let lockIcon = NSImageView()
     private let settingsButton = NSButton()
     private var config: PanelConfig
-    var onTitleChanged: ((String) -> Void)?
     var onSettingsClicked: (() -> Void)?
-    var onDoubleClickBackground: (() -> Void)?
+    var onDoubleClick: (() -> Void)?
 
     init(config: PanelConfig) {
         self.config = config
@@ -30,7 +29,6 @@ final class PanelTitleBar: NSView, NSTextFieldDelegate {
         lockIcon.translatesAutoresizingMaskIntoConstraints = false
         addSubview(lockIcon)
 
-        // Title label — editable on double-click
         titleLabel.stringValue = config.displayTitle
         titleLabel.font = .systemFont(ofSize: 12, weight: .medium)
         titleLabel.textColor = .white.withAlphaComponent(0.9)
@@ -41,7 +39,6 @@ final class PanelTitleBar: NSView, NSTextFieldDelegate {
         titleLabel.focusRingType = .none
         titleLabel.lineBreakMode = .byTruncatingTail
         titleLabel.cell?.truncatesLastVisibleLine = true
-        titleLabel.delegate = self
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         addSubview(titleLabel)
 
@@ -96,61 +93,17 @@ final class PanelTitleBar: NSView, NSTextFieldDelegate {
     override var isFlipped: Bool { true }
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 
-    // MARK: - Double-Click to Edit
+    // MARK: - Double-Click → Fold/Unfold
 
     override func mouseDown(with event: NSEvent) {
         if event.clickCount == 2 {
-            let local = convert(event.locationInWindow, from: nil)
-            if titleLabel.frame.contains(local) {
-                enableEditing()
-            } else {
-                onDoubleClickBackground?()
-            }
+            onDoubleClick?()
         } else {
             super.mouseDown(with: event)
         }
     }
 
-    private func enableEditing() {
-        titleLabel.wantsLayer = true
-        titleLabel.isEditable = true
-        titleLabel.isSelectable = true
-        titleLabel.backgroundColor = NSColor.white.withAlphaComponent(0.15)
-        titleLabel.layer?.cornerRadius = 4
-        window?.makeFirstResponder(titleLabel)
-        titleLabel.selectText(nil)
-    }
-
-    func cancelEditing() {
-        titleLabel.isEditable = false
-        titleLabel.isSelectable = false
-        titleLabel.backgroundColor = .clear
-        titleLabel.stringValue = config.title
-    }
-
-    // MARK: - NSTextFieldDelegate
-
-    func controlTextDidEndEditing(_ obj: Notification) {
-        let newTitle = titleLabel.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
-        titleLabel.isEditable = false
-        titleLabel.isSelectable = false
-        titleLabel.backgroundColor = .clear
-
-        if !newTitle.isEmpty && newTitle != config.title {
-            config.title = newTitle
-            onTitleChanged?(newTitle)
-        } else {
-            titleLabel.stringValue = config.title
-        }
-    }
-
     // MARK: - Public
-
-    func updateTitle(_ title: String) {
-        config.title = title
-        titleLabel.stringValue = config.displayTitle
-        lockIcon.isHidden = !config.isLocked
-    }
 
     func updateConfig(_ config: PanelConfig) {
         self.config = config

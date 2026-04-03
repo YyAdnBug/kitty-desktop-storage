@@ -11,6 +11,7 @@ final class GlobalPreferences: ObservableObject {
         static let alwaysOnTop = "alwaysOnTop"
         static let showInAllSpaces = "showInAllSpaces"
         static let hideOriginalAfterAdd = "hideOriginalAfterAdd"
+        static let useBlurEffect = "useBlurEffect"
     }
 
     @Published var alwaysOnTop: Bool {
@@ -53,10 +54,21 @@ final class GlobalPreferences: ObservableObject {
         }
     }
 
+    @Published var useBlurEffect: Bool {
+        didSet {
+            defaults.set(useBlurEffect, forKey: Keys.useBlurEffect)
+            NotificationCenter.default.post(name: .preferencesDidChange, object: nil)
+        }
+    }
+
     private init() {
         self.alwaysOnTop = defaults.bool(forKey: Keys.alwaysOnTop)
         self.launchAtLogin = SMAppService.mainApp.status == .enabled
+        if defaults.object(forKey: Keys.hideOriginalAfterAdd) == nil {
+            defaults.set(true, forKey: Keys.hideOriginalAfterAdd)
+        }
         self.hideOriginalAfterAdd = defaults.bool(forKey: Keys.hideOriginalAfterAdd)
+        self.useBlurEffect = defaults.bool(forKey: Keys.useBlurEffect)
 
         if defaults.object(forKey: Keys.showInAllSpaces) == nil {
             defaults.set(true, forKey: Keys.showInAllSpaces)

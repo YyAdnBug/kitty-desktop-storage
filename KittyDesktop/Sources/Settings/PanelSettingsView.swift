@@ -6,18 +6,29 @@ struct PanelSettingsView: View {
     @Binding var backgroundColor: CodableColor
     @Binding var alwaysOnTop: Bool
     @Binding var isLocked: Bool
+    @Binding var panelWidth: CGFloat
+    @Binding var panelHeight: CGFloat
     var onDismiss: () -> Void
 
     @State private var swiftUIColor: Color
     @State private var showTitleError = false
+    @State private var widthText: String
+    @State private var heightText: String
 
-    init(title: Binding<String>, opacity: Binding<Float>, backgroundColor: Binding<CodableColor>, alwaysOnTop: Binding<Bool>, isLocked: Binding<Bool>, onDismiss: @escaping () -> Void) {
+    init(title: Binding<String>, opacity: Binding<Float>, backgroundColor: Binding<CodableColor>,
+         alwaysOnTop: Binding<Bool>, isLocked: Binding<Bool>,
+         panelWidth: Binding<CGFloat>, panelHeight: Binding<CGFloat>,
+         onDismiss: @escaping () -> Void) {
         self._title = title
         self._opacity = opacity
         self._backgroundColor = backgroundColor
         self._alwaysOnTop = alwaysOnTop
         self._isLocked = isLocked
+        self._panelWidth = panelWidth
+        self._panelHeight = panelHeight
         self.onDismiss = onDismiss
+        self._widthText = State(initialValue: "\(Int(panelWidth.wrappedValue))")
+        self._heightText = State(initialValue: "\(Int(panelHeight.wrappedValue))")
         let c = backgroundColor.wrappedValue
         self._swiftUIColor = State(initialValue: Color(
             red: Double(c.red),
@@ -61,6 +72,27 @@ struct PanelSettingsView: View {
                 Text("\(Int(opacity * 100))%")
                     .frame(width: 40)
                     .foregroundColor(.secondary)
+            }
+
+            // Size
+            HStack {
+                Text("大小")
+                    .frame(width: 60, alignment: .leading)
+                HStack(spacing: 4) {
+                    TextField("宽", text: $widthText)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 60)
+                        .onSubmit { applySize() }
+                    Text("×")
+                        .foregroundColor(.secondary)
+                    TextField("高", text: $heightText)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 60)
+                        .onSubmit { applySize() }
+                    Text("px")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
 
             // Color
@@ -143,13 +175,27 @@ struct PanelSettingsView: View {
             HStack {
                 Spacer()
                 Button("完成") {
+                    applySize()
                     onDismiss()
                 }
                 .keyboardShortcut(.defaultAction)
             }
         }
         .padding(16)
-        .frame(width: 300)
+        .frame(width: 320)
+    }
+
+    private func applySize() {
+        if let w = Double(widthText), w >= Double(PanelConfig.minWidth) {
+            panelWidth = CGFloat(w)
+        } else {
+            widthText = "\(Int(panelWidth))"
+        }
+        if let h = Double(heightText), h >= Double(PanelConfig.minHeight) {
+            panelHeight = CGFloat(h)
+        } else {
+            heightText = "\(Int(panelHeight))"
+        }
     }
 }
 
@@ -169,6 +215,8 @@ final class PanelSettingsHostingController {
         var bgColor = panel.panelConfig.backgroundColor
         var onTop = panel.panelConfig.alwaysOnTop
         var locked = panel.panelConfig.isLocked
+        var pWidth = panel.frame.width
+        var pHeight = panel.frame.height
 
         let settingsView = PanelSettingsView(
             title: .init(get: { title }, set: { newVal in
@@ -201,6 +249,24 @@ final class PanelSettingsHostingController {
                 locked = newVal
                 panel.panelConfig.isLocked = newVal
                 panel.applyConfigChanges()
+                panel.panelDelegate?.panelDidUpdateConfig(panel)
+            }),
+            panelWidth: .init(get: { pWidth }, set: { newVal in
+                pWidth = newVal
+                var f = panel.frame
+                f.size.width = max(PanelConfig.minWidth, newVal)
+                panel.setFrame(f, display: true)
+                panel.syncFrameToConfig()
+                panel.panelDelegate?.panelDidUpdateConfig(panel)
+            }),
+            panelHeight: .init(get: { pHeight }, set: { newVal in
+                pHeight = newVal
+                var f = panel.frame
+                let newH = max(PanelConfig.minHeight, newVal)
+                f.origin.y += f.height - newH
+                f.size.height = newH
+                panel.setFrame(f, display: true)
+                panel.syncFrameToConfig()
                 panel.panelDelegate?.panelDidUpdateConfig(panel)
             }),
             onDismiss: { [weak popover] in

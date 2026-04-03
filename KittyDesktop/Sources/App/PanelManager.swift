@@ -68,12 +68,6 @@ final class PanelManager: FencePanelDelegate {
         let panel = FencePanel(config: config)
         panel.panelDelegate = self
 
-        panel.fencePanelView.titleBar.onTitleChanged = { [weak self, weak panel] newTitle in
-            guard let panel else { return }
-            panel.panelConfig.title = newTitle
-            self?.syncConfig(for: panel)
-        }
-
         panel.fencePanelView.fileGrid.onItemRemoved = { [weak self, weak panel] item in
             guard let panel else { return }
             FileHideManager.shared.unhideFile(for: item)

@@ -34,6 +34,13 @@ struct ChangelogView: View {
 
     static let entries: [ChangelogEntry] = [
         ChangelogEntry(
+            version: "1.0.0", build: "10", date: "2026-04-03",
+            items: [
+                ChangeItem(type: .added, text: "面板设置中可精确输入宽高（像素），自定义面板大小"),
+                ChangeItem(type: .added, text: "毛玻璃背景效果（NSVisualEffectView），在偏好设置中开启"),
+            ]
+        ),
+        ChangelogEntry(
             version: "1.0.0", build: "9", date: "2026-04-03",
             items: [
                 ChangeItem(type: .fixed, text: "Quick Look 空格键预览现在正常工作"),
